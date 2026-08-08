@@ -4,7 +4,7 @@
 | 模块 | 协议 | 端口 |
 | --- | --- | --- |
 | `lightsail-shadowsocks` | Shadowsocks-libev | 8388（可配置） |
-| `lightsail-hysteria` | Hysteria2 | 443（固定） |
+| `lightsail-hysteria` | Hysteria2 | 443（可配置） |
 | `lightsail-xray` | VLESS + REALITY | 443（可配置） |
 | `lightsail-combined` | 以上三种协议按需组合 | — |
 
@@ -13,7 +13,7 @@
 ### 准备工作
 1. AWS Access Key（用于创建 Lightsail 实例）
 2. 阿里云 OSS Access Key（用于写出配置文件）
-3. 创建一个 OSS Bucket
+3. 创建一个 OSS Bucket（**必须选择海外 Region**，如新加坡 `oss-ap-southeast-1`）
 
 ### 注意点
 1. OSS backend 与 `output_oss_bucket` 变量需指定同一个 Bucket
@@ -24,7 +24,7 @@
 ```bash
 export AWS_ACCESS_KEY_ID=xxx AWS_SECRET_ACCESS_KEY=xxx
 
-export ALICLOUD_ACCESS_KEY=xxx ALICLOUD_SECRET_KEY=xxx ALICLOUD_REGION=cn-hangzhou ALICLOUD_BUCKET=aws-lightsail-terraform
+export ALICLOUD_ACCESS_KEY=xxx ALICLOUD_SECRET_KEY=xxx ALICLOUD_REGION=oss-ap-southeast-1 ALICLOUD_BUCKET=aws-lightsail-terraform
 
 cp terraform.tfvars.json.example terraform.tfvars.json
 # 编辑 terraform.tfvars.json，填入所需实例配置

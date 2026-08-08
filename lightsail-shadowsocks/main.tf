@@ -33,7 +33,7 @@ resource "aws_lightsail_static_ip" "instance" {
 resource "random_password" "password" {
   length           = var.config.shadowsocks_libev_password_length
   special          = true
-  override_special = "_%@"
+  override_special = "_"
 }
 
 resource "aws_lightsail_instance" "instance" {

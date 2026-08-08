@@ -64,6 +64,9 @@ set -eux
 apt update
 apt install -y curl
 
+# 关闭 Ubuntu 自带防火墙（Lightsail 云防火墙已控制端口）
+ufw disable || true
+
 # 安装 Xray（官方脚本，自动创建 /usr/local/etc/xray/ 与 xray.service）
 curl -fsSL https://raw.githubusercontent.com/XTLS/Xray-install/main/install-release.sh -o /tmp/xray2_install.sh
 bash /tmp/xray2_install.sh

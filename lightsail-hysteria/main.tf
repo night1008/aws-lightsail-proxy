@@ -6,7 +6,7 @@ locals {
   proxy_host_with_path = replace(replace(var.config.hysteria_proxy_url, "https://", ""), "http://", "")
   sni                  = split("/", local.proxy_host_with_path)[0]
 
-  hysteria_port = 443
+  hysteria_port = var.config.hysteria_port
 
   ip_address = (
     var.config.create_static_ip
@@ -46,7 +46,7 @@ resource "aws_lightsail_static_ip" "instance" {
 resource "random_password" "password" {
   length           = var.config.hysteria_password_length
   special          = true
-  override_special = "_%@"
+  override_special = "_"
 }
 
 resource "aws_lightsail_instance" "instance" {
@@ -97,6 +97,9 @@ masquerade:
     url: '${var.config.hysteria_proxy_url}'
     rewriteHost: true
 EOF
+
+# 关闭 Ubuntu 自带防火墙（Lightsail 云防火墙已控制端口），否则 UDP/443 被阻导致 QUIC 超时
+ufw disable || true
 
 systemctl enable hysteria-server
 systemctl restart hysteria-server

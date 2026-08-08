@@ -20,15 +20,13 @@ locals {
   } : null
 
   shadowsocks_url = var.config.shadowsocks_enable ? format(
-    "ss://%s@%s:%d#%s",
-    base64encode(format("%s:%s", var.config.shadowsocks_libev_method, random_password.ss_password[0].result)),
-    local.ip_address,
-    var.config.shadowsocks_libev_port,
+    "ss://%s#%s",
+    base64encode(format("%s:%s@%s:%d", var.config.shadowsocks_libev_method, random_password.ss_password[0].result, local.ip_address, var.config.shadowsocks_libev_port)),
     format("%s-%s", var.config.region, var.config.instance_name)
   ) : null
 
   # Hysteria2
-  hysteria_port        = 443
+  hysteria_port        = var.config.hysteria_port
   proxy_host_with_path = replace(replace(var.config.hysteria_proxy_url, "https://", ""), "http://", "")
   sni                  = split("/", local.proxy_host_with_path)[0]
 
@@ -78,14 +76,14 @@ resource "random_password" "ss_password" {
   count            = var.config.shadowsocks_enable ? 1 : 0
   length           = var.config.shadowsocks_libev_password_length
   special          = true
-  override_special = "_%@"
+  override_special = "_"
 }
 
 resource "random_password" "hy_password" {
   count            = var.config.hysteria_enable ? 1 : 0
   length           = var.config.hysteria_password_length
   special          = true
-  override_special = "_%@"
+  override_special = "_"
 }
 
 resource "random_uuid" "xray_user_id" {
@@ -112,6 +110,9 @@ ENABLE_XRAY=${var.config.xray_enable ? "true" : "false"}
 
 apt update
 apt install -y curl openssl ca-certificates
+
+# 关闭 Ubuntu 自带防火墙（Lightsail 云防火墙已控制端口）
+ufw disable || true
 
 # ── Shadowsocks-libev ───────────────────────────────────────────────────────
 if [ "$ENABLE_SS" = "true" ]; then

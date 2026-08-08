@@ -18,6 +18,7 @@ variable "config" {
     shadowsocks_libev_password_length = number # shadowsocks-libev password length
     shadowsocks_libev_method          = string # shadowsocks-libev cipher method
     # hysteria2（hysteria_enable = true 时生效）
+    hysteria_port                    = optional(number, 443) # hysteria2 listen port，默认 443
     hysteria_password_length          = number # hysteria2 password length
     hysteria_proxy_url                = string # masquerade proxy url, e.g. https://bing.com
     # xray VLESS+REALITY（xray_enable = true 时生效）
@@ -37,7 +38,9 @@ variable "config" {
     shadowsocks_libev_port            = 8388
     shadowsocks_libev_password_length = 10
     shadowsocks_libev_method          = "chacha20-ietf-poly1305"
+    hysteria_port                     = 443
     hysteria_password_length          = 10
+    hysteria_port                     = 443
     hysteria_proxy_url                = "https://bing.com"
     xray_port                         = 443
     xray_proxy_url                    = "https://www.google.com"
@@ -71,16 +74,16 @@ variable "config" {
   }
 
   # 端口冲突检查
-  # hysteria2 固定占用 443；xray_port 默认也是 443，两者同时启用时必须改 xray_port
+  # hysteria_port 与 xray_port 不能相同
   validation {
-    condition     = !(var.config.hysteria_enable && var.config.xray_enable) || var.config.xray_port != 443
-    error_message = "Port conflict: hysteria2 uses port 443. Set xray_port to a different port when both hysteria_enable and xray_enable are true."
+    condition     = !(var.config.hysteria_enable && var.config.xray_enable) || var.config.hysteria_port != var.config.xray_port
+    error_message = "Port conflict: hysteria_port and xray_port must differ when both are enabled."
   }
 
-  # shadowsocks 端口不能与 hysteria2 的固定端口 443 冲突
+  # shadowsocks 端口不能与 hysteria_port 冲突
   validation {
-    condition     = !(var.config.shadowsocks_enable && var.config.hysteria_enable) || var.config.shadowsocks_libev_port != 443
-    error_message = "Port conflict: hysteria2 uses port 443. Set shadowsocks_libev_port to a different port when both shadowsocks_enable and hysteria_enable are true."
+    condition     = !(var.config.shadowsocks_enable && var.config.hysteria_enable) || var.config.shadowsocks_libev_port != var.config.hysteria_port
+    error_message = "Port conflict: shadowsocks_libev_port and hysteria_port must differ when both are enabled."
   }
 
   # shadowsocks 端口不能与 xray_port 冲突
