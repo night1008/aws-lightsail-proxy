@@ -25,6 +25,7 @@
 ```
 
 ## 项目结构
+```
 ├── terraform/         # Terraform 配置（部署 Lightsail 实例）
 │   ├── lightsail-combined/     # 多协议合一模块
 │   ├── lightsail-hysteria/     # Hysteria2 独立模块
