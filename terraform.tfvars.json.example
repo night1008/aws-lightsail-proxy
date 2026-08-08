@@ -36,7 +36,7 @@
       "hysteria_proxy_url": "https://bing.com",
       "xray_enable": false,
       "xray_port": 443,
-      "xray_proxy_url": "https://www.google.com",
+      "xray_proxy_url": "https://bing.com",
       "xray_private_key": "",
       "xray_public_key": ""
     }
@@ -48,7 +48,7 @@
       "availability_zone": "ap-northeast-1a",
       "create_static_ip": false,
       "xray_port": 443,
-      "xray_proxy_url": "https://www.google.com",
+      "xray_proxy_url": "https://bing.com",
       "xray_private_key": "<用 xray x25519 生成的 Private key>",
       "xray_public_key": "<用 xray x25519 生成的 Public key>"
     }

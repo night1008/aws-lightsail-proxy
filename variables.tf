@@ -57,7 +57,7 @@ variable "combined_instances" {
     hysteria_proxy_url                = string # masquerade proxy url, e.g. https://bing.com
     xray_enable                       = bool   # 是否启用 xray (VLESS+REALITY)
     xray_port                         = number # xray listen port，建议使用 443
-    xray_proxy_url                    = string # REALITY 伪装目标 URL，如 https://www.google.com
+    xray_proxy_url                    = string # REALITY 伪装目标 URL，如 https://bing.com
     xray_private_key                  = string # x25519 私阥（base64url，无填充）
     xray_public_key                   = string # x25519 公阥（base64url，无填充）
   }))
@@ -76,7 +76,7 @@ variable "xray_instances" {
     availability_zone    = string # aws lightsail instance availability zone
     create_static_ip     = bool   # create lightsail static ip
     xray_port            = number # xray listen port，建议使用 443
-    xray_proxy_url       = string # REALITY 伪装目标 URL，如 https://www.google.com
+    xray_proxy_url       = string # REALITY 伪装目标 URL，如 https://bing.com
     xray_private_key     = string # x25519 私钥（base64url，无填充），服务端使用
     xray_public_key      = string # x25519 公钥（base64url，无填充），客户端使用
   }))

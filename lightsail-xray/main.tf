@@ -8,7 +8,7 @@ locals {
     : aws_lightsail_instance.instance.public_ip_address
   )
 
-  # 从 https://www.google.com[/...] 解析出主机名，用于 dest 与 serverNames
+  # 从 https://bing.com[/...] 解析出主机名，用于 dest 与 serverNames
   proxy_host_with_path = replace(replace(var.config.xray_proxy_url, "https://", ""), "http://", "")
   dest_host            = split("/", local.proxy_host_with_path)[0]
   dest                 = "${local.dest_host}:443"
