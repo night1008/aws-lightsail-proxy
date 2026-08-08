@@ -17,6 +17,7 @@
       "instance_name": "hy2-1",
       "availability_zone": "ap-northeast-1a",
       "create_static_ip": false,
+      "hysteria_port": 8443,
       "hysteria_password_length": 16,
       "hysteria_proxy_url": "https://bing.com"
     }
@@ -32,6 +33,7 @@
       "shadowsocks_libev_password_length": 10,
       "shadowsocks_libev_method": "chacha20-ietf-poly1305",
       "hysteria_enable": true,
+      "hysteria_port": 8443,
       "hysteria_password_length": 16,
       "hysteria_proxy_url": "https://bing.com",
       "xray_enable": false,

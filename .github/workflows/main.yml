@@ -29,6 +29,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: terraform
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -46,10 +50,6 @@ jobs:
       - name: Download Terraform input file
         run: ./download-oss-file.sh inputs/terraform.tfvars.json terraform.tfvars.json
 
-      # for test
-      # - name: Run a one-line script
-      #   run: cat terraform.tfvars.json
-
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: terraform plan -input=false
@@ -57,7 +57,6 @@ jobs:
           TF_VAR_output_oss_bucket: ${{ secrets.ALICLOUD_BUCKET }}
 
       # On push to "main", build or change infrastructure according to Terraform configuration files
-      # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
         env:

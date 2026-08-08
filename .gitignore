@@ -1,3 +1,5 @@
+.DS_Store
+
 # Local .terraform directories
 **/.terraform/*
 
@@ -28,7 +30,18 @@ override.tf.json
 # Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
 # example: *tfplan*
 
-terraform.tfvars.json
+terraform/terraform.tfvars.json
 
 # local config output file
-outputs/
+terraform/outputs/
+
+# Next.js
+web/node_modules/
+web/.next/
+web/.env*.local
+web/out/
+
+# Go compiled binaries
+web/api/input
+web/api/submit
+web/api/subscribe

@@ -38,9 +38,8 @@ variable "config" {
     shadowsocks_libev_port            = 8388
     shadowsocks_libev_password_length = 10
     shadowsocks_libev_method          = "chacha20-ietf-poly1305"
-    hysteria_port                     = 443
+    hysteria_port                     = 8443
     hysteria_password_length          = 10
-    hysteria_port                     = 443
     hysteria_proxy_url                = "https://bing.com"
     xray_port                         = 443
     xray_proxy_url                    = "https://bing.com"

@@ -29,7 +29,7 @@ variable "hysteria_instances" {
     instance_name     = string # aws lightsail instance name
     availability_zone = string # aws lightsail instance availability zone
     create_static_ip         = bool   # create lightsail static ip
-    hysteria_port            = optional(number, 443) # hysteria2 listen port，默认 443
+    hysteria_port            = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length = number # hysteria2 password length
     hysteria_proxy_url       = string # masquerade proxy url, e.g. https://bing.com
   }))
@@ -52,7 +52,7 @@ variable "combined_instances" {
     shadowsocks_libev_password_length = number # shadowsocks-libev password length
     shadowsocks_libev_method          = string # shadowsocks-libev config method
     hysteria_enable                   = bool   # 是否启用 hysteria2
-    hysteria_port                     = optional(number, 443) # hysteria2 listen port，默认 443
+    hysteria_port                     = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length          = number # hysteria2 password length
     hysteria_proxy_url                = string # masquerade proxy url, e.g. https://bing.com
     xray_enable                       = bool   # 是否启用 xray (VLESS+REALITY)
