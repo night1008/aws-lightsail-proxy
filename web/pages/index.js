@@ -314,6 +314,42 @@ export default function Home() {
                       </div>
                     )}
                   </div>
+
+                  <div className="border-t pt-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-2 h-2 rounded-full ${instance.anytls_enable ? 'bg-amber-500' : 'bg-muted-foreground/30'}`} />
+                      <span className="font-semibold text-sm">AnyTLS</span>
+                      {instance.anytls_enable ? <span className="text-xs text-amber-600">已启用</span> : <span className="text-xs text-muted-foreground">未启用</span>}
+                    </div>
+                    {instance.anytls_enable && (
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm ml-4">
+                        <div className="text-muted-foreground">端口</div>
+                        <div>{instance.anytls_port || 8444}</div>
+                        <div className="text-muted-foreground">密码长度</div>
+                        <div>{instance.anytls_password_length}</div>
+                        <div className="text-muted-foreground">伪装 URL</div>
+                        <div className="truncate" title={instance.anytls_proxy_url}><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{instance.anytls_proxy_url}</code></div>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="border-t pt-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className={`w-2 h-2 rounded-full ${instance.tuic_enable ? 'bg-emerald-500' : 'bg-muted-foreground/30'}`} />
+                      <span className="font-semibold text-sm">TUIC v5</span>
+                      {instance.tuic_enable ? <span className="text-xs text-emerald-600">已启用</span> : <span className="text-xs text-muted-foreground">未启用</span>}
+                    </div>
+                    {instance.tuic_enable && (
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm ml-4">
+                        <div className="text-muted-foreground">端口</div>
+                        <div>{instance.tuic_port || 8445}</div>
+                        <div className="text-muted-foreground">密码长度</div>
+                        <div>{instance.tuic_password_length}</div>
+                        <div className="text-muted-foreground">伪装 URL</div>
+                        <div className="truncate" title={instance.tuic_proxy_url}><code className="bg-muted px-1.5 py-0.5 rounded text-xs">{instance.tuic_proxy_url}</code></div>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -416,7 +452,7 @@ export default function Home() {
                   </Card>
 
                   {/* 协议配置 */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {/* Shadowsocks */}
                     <Card className={`flex flex-col transition-opacity ${!instance.shadowsocks_enable ? 'opacity-60' : ''}`}>
                       <CardHeader className="border-b bg-muted/20">
@@ -579,6 +615,108 @@ export default function Home() {
                             value={instance.xray_public_key}
                             onChange={(e) => handleInstanceChange(index, 'xray_public_key', e.target.value)}
                             disabled={!instance.xray_enable}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* AnyTLS */}
+                    <Card className={`flex flex-col transition-opacity ${!instance.anytls_enable ? 'opacity-60' : ''}`}>
+                      <CardHeader className="border-b bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-1.5 h-1.5 rounded-full ${instance.anytls_enable ? 'bg-amber-500' : 'bg-muted-foreground'}`} />
+                            <span className="font-semibold text-sm">AnyTLS</span>
+                          </div>
+                          <Switch
+                            checked={instance.anytls_enable}
+                            onCheckedChange={(checked) => handleInstanceChange(index, 'anytls_enable', checked)}
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-1 space-y-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">anytls_port</Label>
+                          <Input
+                            type="number"
+                            value={instance.anytls_port ?? 8444}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                              handleInstanceChange(index, 'anytls_port', raw === '' ? '' : parseInt(raw) || 0)
+                            }}
+                            disabled={!instance.anytls_enable}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">anytls_password_length</Label>
+                          <Input
+                            type="number"
+                            value={instance.anytls_password_length}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                              handleInstanceChange(index, 'anytls_password_length', raw === '' ? '' : parseInt(raw) || 0)
+                            }}
+                            disabled={!instance.anytls_enable}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">anytls_proxy_url</Label>
+                          <Input
+                            type="text"
+                            value={instance.anytls_proxy_url}
+                            onChange={(e) => handleInstanceChange(index, 'anytls_proxy_url', e.target.value)}
+                            disabled={!instance.anytls_enable}
+                          />
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* TUIC v5 */}
+                    <Card className={`flex flex-col transition-opacity ${!instance.tuic_enable ? 'opacity-60' : ''}`}>
+                      <CardHeader className="border-b bg-muted/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className={`w-1.5 h-1.5 rounded-full ${instance.tuic_enable ? 'bg-emerald-500' : 'bg-muted-foreground'}`} />
+                            <span className="font-semibold text-sm">TUIC v5</span>
+                          </div>
+                          <Switch
+                            checked={instance.tuic_enable}
+                            onCheckedChange={(checked) => handleInstanceChange(index, 'tuic_enable', checked)}
+                          />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="flex-1 space-y-3">
+                        <div className="space-y-1">
+                          <Label className="text-xs">tuic_port</Label>
+                          <Input
+                            type="number"
+                            value={instance.tuic_port ?? 8445}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                              handleInstanceChange(index, 'tuic_port', raw === '' ? '' : parseInt(raw) || 0)
+                            }}
+                            disabled={!instance.tuic_enable}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">tuic_password_length</Label>
+                          <Input
+                            type="number"
+                            value={instance.tuic_password_length}
+                            onChange={(e) => {
+                              const raw = e.target.value
+                              handleInstanceChange(index, 'tuic_password_length', raw === '' ? '' : parseInt(raw) || 0)
+                            }}
+                            disabled={!instance.tuic_enable}
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">tuic_proxy_url</Label>
+                          <Input
+                            type="text"
+                            value={instance.tuic_proxy_url}
+                            onChange={(e) => handleInstanceChange(index, 'tuic_proxy_url', e.target.value)}
+                            disabled={!instance.tuic_enable}
                           />
                         </div>
                       </CardContent>

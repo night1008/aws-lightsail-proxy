@@ -27,6 +27,10 @@ type InstanceOutput struct {
 	HysteriaURL       *string            `json:"hysteria_url"`
 	XrayConfig        *XrayConfig        `json:"xray_config"`
 	XrayURL           *string            `json:"xray_url"`
+	AnyTLSConfig      *AnyTLSConfig      `json:"anytls_config"`
+	AnyTLSURL         *string            `json:"anytls_url"`
+	TUICConfig        *TUICConfig        `json:"tuic_config"`
+	TUICURL           *string            `json:"tuic_url"`
 }
 
 type ShadowsocksConfig struct {
@@ -52,6 +56,21 @@ type XrayConfig struct {
 	PublicKey string `json:"public_key"`
 	SNI       string `json:"sni"`
 	ProxyURL  string `json:"proxy_url"`
+}
+
+type AnyTLSConfig struct {
+	Listen   int    `json:"listen"`
+	Password string `json:"password"`
+	SNI      string `json:"sni"`
+	ProxyURL string `json:"proxy_url"`
+}
+
+type TUICConfig struct {
+	Listen   int    `json:"listen"`
+	UUID     string `json:"uuid"`
+	Password string `json:"password"`
+	SNI      string `json:"sni"`
+	ProxyURL string `json:"proxy_url"`
 }
 
 func SubscribeHandler(w http.ResponseWriter, r *http.Request) {
@@ -114,6 +133,12 @@ func SubscribeHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		if instance.XrayURL != nil && *instance.XrayURL != "" {
 			urls = append(urls, *instance.XrayURL)
+		}
+		if instance.AnyTLSURL != nil && *instance.AnyTLSURL != "" {
+			urls = append(urls, *instance.AnyTLSURL)
+		}
+		if instance.TUICURL != nil && *instance.TUICURL != "" {
+			urls = append(urls, *instance.TUICURL)
 		}
 	}
 

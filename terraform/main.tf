@@ -89,6 +89,8 @@ locals {
   hysteria_region_instances = { for region, instances in { for s in var.hysteria_instances : s.region => s... } : region => { for ins in instances : format("%s-%s", ins.region, ins.instance_name) => ins } }
   combined_region_instances = { for region, instances in { for s in var.combined_instances : s.region => s... } : region => { for ins in instances : format("%s-%s", ins.region, ins.instance_name) => ins } }
   xray_region_instances     = { for region, instances in { for s in var.xray_instances : s.region => s... } : region => { for ins in instances : format("%s-%s", ins.region, ins.instance_name) => ins } }
+  anytls_region_instances   = { for region, instances in { for s in var.anytls_instances : s.region => s... } : region => { for ins in instances : format("%s-%s", ins.region, ins.instance_name) => ins } }
+  tuic_region_instances     = { for region, instances in { for s in var.tuic_instances : s.region => s... } : region => { for ins in instances : format("%s-%s", ins.region, ins.instance_name) => ins } }
 }
 
 module "lightsail-shadowsocks-ap-northeast-1" {
@@ -758,6 +760,344 @@ module "lightsail-xray-us-west-2" {
   source = "./lightsail-xray"
 
   for_each = lookup(local.xray_region_instances, "us-west-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-west-2
+  }
+}
+
+module "lightsail-anytls-ap-northeast-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ap-northeast-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-northeast-1
+  }
+}
+
+module "lightsail-anytls-ap-northeast-2" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ap-northeast-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-northeast-2
+  }
+}
+
+module "lightsail-anytls-ap-south-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ap-south-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-south-1
+  }
+}
+
+module "lightsail-anytls-ap-southeast-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ap-southeast-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-southeast-1
+  }
+}
+
+module "lightsail-anytls-ap-southeast-2" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ap-southeast-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-southeast-2
+  }
+}
+
+module "lightsail-anytls-ca-central-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "ca-central-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ca-central-1
+  }
+}
+
+module "lightsail-anytls-eu-central-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "eu-central-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-central-1
+  }
+}
+
+module "lightsail-anytls-eu-west-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "eu-west-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-1
+  }
+}
+
+module "lightsail-anytls-eu-west-2" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "eu-west-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-2
+  }
+}
+
+module "lightsail-anytls-eu-west-3" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "eu-west-3", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-3
+  }
+}
+
+module "lightsail-anytls-us-east-1" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "us-east-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-east-1
+  }
+}
+
+module "lightsail-anytls-us-east-2" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "us-east-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-east-2
+  }
+}
+
+module "lightsail-anytls-us-west-2" {
+  source = "./lightsail-anytls"
+
+  for_each = lookup(local.anytls_region_instances, "us-west-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-west-2
+  }
+}
+
+module "lightsail-tuic-ap-northeast-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ap-northeast-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-northeast-1
+  }
+}
+
+module "lightsail-tuic-ap-northeast-2" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ap-northeast-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-northeast-2
+  }
+}
+
+module "lightsail-tuic-ap-south-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ap-south-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-south-1
+  }
+}
+
+module "lightsail-tuic-ap-southeast-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ap-southeast-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-southeast-1
+  }
+}
+
+module "lightsail-tuic-ap-southeast-2" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ap-southeast-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ap-southeast-2
+  }
+}
+
+module "lightsail-tuic-ca-central-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "ca-central-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.ca-central-1
+  }
+}
+
+module "lightsail-tuic-eu-central-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "eu-central-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-central-1
+  }
+}
+
+module "lightsail-tuic-eu-west-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "eu-west-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-1
+  }
+}
+
+module "lightsail-tuic-eu-west-2" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "eu-west-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-2
+  }
+}
+
+module "lightsail-tuic-eu-west-3" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "eu-west-3", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.eu-west-3
+  }
+}
+
+module "lightsail-tuic-us-east-1" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "us-east-1", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-east-1
+  }
+}
+
+module "lightsail-tuic-us-east-2" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "us-east-2", {})
+
+  config            = each.value
+  output_oss_bucket = var.output_oss_bucket
+
+  providers = {
+    aws = aws.us-east-2
+  }
+}
+
+module "lightsail-tuic-us-west-2" {
+  source = "./lightsail-tuic"
+
+  for_each = lookup(local.tuic_region_instances, "us-west-2", {})
 
   config            = each.value
   output_oss_bucket = var.output_oss_bucket

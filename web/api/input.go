@@ -60,6 +60,14 @@ type InstanceConfig struct {
 	XrayProxyURL                   string `json:"xray_proxy_url"`
 	XrayPrivateKey                 string `json:"xray_private_key"`
 	XrayPublicKey                  string `json:"xray_public_key"`
+	AnyTLSEnable                   bool   `json:"anytls_enable"`
+	AnyTLSPort                     int    `json:"anytls_port"`
+	AnyTLSPasswordLength           int    `json:"anytls_password_length"`
+	AnyTLSProxyURL                 string `json:"anytls_proxy_url"`
+	TUICEnable                     bool   `json:"tuic_enable"`
+	TUICPort                       int    `json:"tuic_port"`
+	TUICPasswordLength             int    `json:"tuic_password_length"`
+	TUICProxyURL                   string `json:"tuic_proxy_url"`
 }
 
 type ShadowsocksInstanceConfig struct {
@@ -93,11 +101,33 @@ type XrayInstanceConfig struct {
 	XrayPublicKey    string `json:"xray_public_key"`
 }
 
+type AnyTLSInstanceConfig struct {
+	Region                 string `json:"region"`
+	InstanceName           string `json:"instance_name"`
+	AvailabilityZone       string `json:"availability_zone"`
+	CreateStaticIP         bool   `json:"create_static_ip"`
+	AnyTLSPort             int    `json:"anytls_port"`
+	AnyTLSPasswordLength   int    `json:"anytls_password_length"`
+	AnyTLSProxyURL         string `json:"anytls_proxy_url"`
+}
+
+type TUICInstanceConfig struct {
+	Region               string `json:"region"`
+	InstanceName         string `json:"instance_name"`
+	AvailabilityZone     string `json:"availability_zone"`
+	CreateStaticIP       bool   `json:"create_static_ip"`
+	TUICPort             int    `json:"tuic_port"`
+	TUICPasswordLength   int    `json:"tuic_password_length"`
+	TUICProxyURL         string `json:"tuic_proxy_url"`
+}
+
 type InstanceConfigList struct {
 	ShadowsocksInstances []*ShadowsocksInstanceConfig `json:"shadowsocks_instances"`
 	HysteriaInstances    []*HysteriaInstanceConfig    `json:"hysteria_instances"`
 	CombinedInstances    []*InstanceConfig            `json:"combined_instances"`
 	XrayInstances        []*XrayInstanceConfig        `json:"xray_instances"`
+	AnyTLSInstances      []*AnyTLSInstanceConfig      `json:"anytls_instances"`
+	TUICInstances        []*TUICInstanceConfig        `json:"tuic_instances"`
 }
 
 func InputHandler(w http.ResponseWriter, r *http.Request) {
@@ -132,6 +162,8 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 			instanceConfigList.HysteriaInstances = make([]*HysteriaInstanceConfig, 0)
 			instanceConfigList.CombinedInstances = make([]*InstanceConfig, 0)
 			instanceConfigList.XrayInstances = make([]*XrayInstanceConfig, 0)
+			instanceConfigList.AnyTLSInstances = make([]*AnyTLSInstanceConfig, 0)
+			instanceConfigList.TUICInstances = make([]*TUICInstanceConfig, 0)
 			response(w, http.StatusOK, instanceConfigList)
 		} else {
 			response(w, http.StatusInternalServerError, H{"error": "failed to read configuration"})
@@ -161,6 +193,12 @@ func InputHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	if instanceConfigList.XrayInstances == nil {
 		instanceConfigList.XrayInstances = make([]*XrayInstanceConfig, 0)
+	}
+	if instanceConfigList.AnyTLSInstances == nil {
+		instanceConfigList.AnyTLSInstances = make([]*AnyTLSInstanceConfig, 0)
+	}
+	if instanceConfigList.TUICInstances == nil {
+		instanceConfigList.TUICInstances = make([]*TUICInstanceConfig, 0)
 	}
 
 	response(w, http.StatusOK, instanceConfigList)

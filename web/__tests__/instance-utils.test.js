@@ -67,6 +67,8 @@ describe('validateInstanceConfig', () => {
       shadowsocks_enable: false,
       hysteria_enable: false,
       xray_enable: false,
+      anytls_enable: false,
+      tuic_enable: false,
     })
     expect(validateInstanceConfig(cfg, 0)).toContain('至少开启一个协议')
   })
@@ -116,21 +118,39 @@ describe('validateInstanceConfig', () => {
     expect(validateInstanceConfig(cfg, 0)).toContain('xray_private_key')
   })
 
+  it('rejects invalid anytls_proxy_url', () => {
+    const cfg = validConfig({
+      anytls_enable: true,
+      anytls_proxy_url: 'invalid-url',
+    })
+    expect(validateInstanceConfig(cfg, 0)).toContain('anytls_proxy_url')
+  })
+
+  it('rejects invalid tuic_proxy_url', () => {
+    const cfg = validConfig({
+      tuic_enable: true,
+      tuic_proxy_url: 'invalid-url',
+    })
+    expect(validateInstanceConfig(cfg, 0)).toContain('tuic_proxy_url')
+  })
+
   it('rejects port conflict: ss port equals hysteria port', () => {
     const cfg = validConfig({
       shadowsocks_enable: true,
       hysteria_enable: true,
-      shadowsocks_libev_port: 443,
+      shadowsocks_libev_port: 8443,
+      hysteria_port: 8443,
     })
     expect(validateInstanceConfig(cfg, 0)).toContain('端口冲突')
-    expect(validateInstanceConfig(cfg, 0)).toContain('443')
+    expect(validateInstanceConfig(cfg, 0)).toContain('8443')
   })
 
   it('rejects port conflict: xray port equals hysteria port', () => {
     const cfg = validConfig({
       xray_enable: true,
       hysteria_enable: true,
-      xray_port: 443,
+      xray_port: 8443,
+      hysteria_port: 8443,
       xray_private_key: 'pk',
       xray_public_key: 'pubk',
     })
@@ -145,6 +165,26 @@ describe('validateInstanceConfig', () => {
       xray_port: 9000,
       xray_private_key: 'pk',
       xray_public_key: 'pubk',
+    })
+    expect(validateInstanceConfig(cfg, 0)).toContain('端口冲突')
+  })
+
+  it('rejects port conflict: anytls port equals hysteria port', () => {
+    const cfg = validConfig({
+      anytls_enable: true,
+      hysteria_enable: true,
+      anytls_port: 8443,
+      hysteria_port: 8443,
+    })
+    expect(validateInstanceConfig(cfg, 0)).toContain('端口冲突')
+  })
+
+  it('rejects port conflict: tuic port equals anytls port', () => {
+    const cfg = validConfig({
+      tuic_enable: true,
+      anytls_enable: true,
+      tuic_port: 8444,
+      anytls_port: 8444,
     })
     expect(validateInstanceConfig(cfg, 0)).toContain('端口冲突')
   })

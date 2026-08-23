@@ -26,7 +26,7 @@ func validateInstances(instances []*InstanceConfig) error {
 			instanceName = fmt.Sprintf("#%d", idx+1)
 		}
 
-		if !instance.ShadowsocksEnable && !instance.HysteriaEnable && !instance.XrayEnable {
+		if !instance.ShadowsocksEnable && !instance.HysteriaEnable && !instance.XrayEnable && !instance.AnyTLSEnable && !instance.TUICEnable {
 			return fmt.Errorf("instance %s should enable at least one protocol", instanceName)
 		}
 
@@ -54,6 +54,28 @@ func validateInstances(instances []*InstanceConfig) error {
 				return fmt.Errorf("instance %s has port conflict: %d between %s and xray", instanceName, instance.XrayPort, protocol)
 			}
 			usedPorts[instance.XrayPort] = "xray"
+		}
+
+		if instance.AnyTLSEnable {
+			aPort := instance.AnyTLSPort
+			if aPort == 0 {
+				aPort = 8444
+			}
+			if protocol, exists := usedPorts[aPort]; exists {
+				return fmt.Errorf("instance %s has port conflict: %d between %s and anytls", instanceName, aPort, protocol)
+			}
+			usedPorts[aPort] = "anytls"
+		}
+
+		if instance.TUICEnable {
+			tPort := instance.TUICPort
+			if tPort == 0 {
+				tPort = 8445
+			}
+			if protocol, exists := usedPorts[tPort]; exists {
+				return fmt.Errorf("instance %s has port conflict: %d between %s and tuic", instanceName, tPort, protocol)
+			}
+			usedPorts[tPort] = "tuic"
 		}
 	}
 
@@ -110,6 +132,8 @@ func SubmitHandler(w http.ResponseWriter, r *http.Request) {
 		HysteriaInstances:    make([]*HysteriaInstanceConfig, 0),
 		CombinedInstances:    req.CombinedInstances,
 		XrayInstances:        make([]*XrayInstanceConfig, 0),
+		AnyTLSInstances:      make([]*AnyTLSInstanceConfig, 0),
+		TUICInstances:        make([]*TUICInstanceConfig, 0),
 	}
 	instancesBytes, err := json.Marshal(instanceConfigList)
 	if err != nil {

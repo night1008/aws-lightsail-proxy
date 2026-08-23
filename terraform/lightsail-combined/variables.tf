@@ -13,12 +13,14 @@ variable "config" {
     shadowsocks_enable                = bool # 是否启用 shadowsocks-libev
     hysteria_enable                   = bool # 是否启用 hysteria2
     xray_enable                       = bool # 是否启用 xray (VLESS+REALITY)
+    anytls_enable                     = bool # 是否启用 anytls (sing-box)
+    tuic_enable                       = bool # 是否启用 tuic v5 (sing-box)
     # shadowsocks-libev（shadowsocks_enable = true 时生效）
     shadowsocks_libev_port            = number # shadowsocks-libev listen port
     shadowsocks_libev_password_length = number # shadowsocks-libev password length
     shadowsocks_libev_method          = string # shadowsocks-libev cipher method
     # hysteria2（hysteria_enable = true 时生效）
-    hysteria_port                    = optional(number, 443) # hysteria2 listen port，默认 443
+    hysteria_port                     = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length          = number # hysteria2 password length
     hysteria_proxy_url                = string # masquerade proxy url, e.g. https://bing.com
     # xray VLESS+REALITY（xray_enable = true 时生效）
@@ -26,6 +28,14 @@ variable "config" {
     xray_proxy_url                    = string # REALITY 伪装目标 URL，如 https://bing.com
     xray_private_key                  = string # x25519 私钥（base64url，无填充），服务端使用
     xray_public_key                   = string # x25519 公钥（base64url，无填充），客户端使用
+    # anytls（anytls_enable = true 时生效）
+    anytls_port                       = optional(number, 8444) # anytls listen port，默认 8444
+    anytls_password_length            = number # anytls password length
+    anytls_proxy_url                  = string # masquerade proxy url, e.g. https://bing.com
+    # tuic v5（tuic_enable = true 时生效）
+    tuic_port                         = optional(number, 8445) # tuic listen port，默认 8445
+    tuic_password_length              = number # tuic password length
+    tuic_proxy_url                    = string # masquerade proxy url, e.g. https://bing.com
   })
   default = {
     region                            = "ap-northeast-1"
@@ -35,6 +45,8 @@ variable "config" {
     shadowsocks_enable                = false
     hysteria_enable                   = false
     xray_enable                       = false
+    anytls_enable                     = false
+    tuic_enable                       = false
     shadowsocks_libev_port            = 8388
     shadowsocks_libev_password_length = 10
     shadowsocks_libev_method          = "chacha20-ietf-poly1305"
@@ -45,6 +57,12 @@ variable "config" {
     xray_proxy_url                    = "https://bing.com"
     xray_private_key                  = ""
     xray_public_key                   = ""
+    anytls_port                       = 8444
+    anytls_password_length            = 10
+    anytls_proxy_url                  = "https://bing.com"
+    tuic_port                         = 8445
+    tuic_password_length              = 10
+    tuic_proxy_url                    = "https://bing.com"
   }
 
   validation {
@@ -53,8 +71,8 @@ variable "config" {
   }
 
   validation {
-    condition     = var.config.shadowsocks_enable || var.config.hysteria_enable || var.config.xray_enable
-    error_message = "At least one protocol must be enabled (shadowsocks_enable, hysteria_enable, or xray_enable)."
+    condition     = var.config.shadowsocks_enable || var.config.hysteria_enable || var.config.xray_enable || var.config.anytls_enable || var.config.tuic_enable
+    error_message = "At least one protocol must be enabled (shadowsocks_enable, hysteria_enable, xray_enable, anytls_enable, or tuic_enable)."
   }
 
   validation {
@@ -68,26 +86,68 @@ variable "config" {
   }
 
   validation {
+    condition     = !var.config.anytls_enable || can(regex("^https?://[^/]+", var.config.anytls_proxy_url))
+    error_message = "anytls_proxy_url must be a valid http(s) URL when anytls_enable is true."
+  }
+
+  validation {
+    condition     = !var.config.tuic_enable || can(regex("^https?://[^/]+", var.config.tuic_proxy_url))
+    error_message = "tuic_proxy_url must be a valid http(s) URL when tuic_enable is true."
+  }
+
+  validation {
     condition     = !var.config.xray_enable || (length(var.config.xray_private_key) > 0 && length(var.config.xray_public_key) > 0)
     error_message = "xray_private_key and xray_public_key must be provided when xray_enable is true (generate with: scripts/gen-xray-keys.sh)."
   }
 
   # 端口冲突检查
-  # hysteria_port 与 xray_port 不能相同
   validation {
     condition     = !(var.config.hysteria_enable && var.config.xray_enable) || var.config.hysteria_port != var.config.xray_port
     error_message = "Port conflict: hysteria_port and xray_port must differ when both are enabled."
   }
 
-  # shadowsocks 端口不能与 hysteria_port 冲突
   validation {
     condition     = !(var.config.shadowsocks_enable && var.config.hysteria_enable) || var.config.shadowsocks_libev_port != var.config.hysteria_port
     error_message = "Port conflict: shadowsocks_libev_port and hysteria_port must differ when both are enabled."
   }
 
-  # shadowsocks 端口不能与 xray_port 冲突
   validation {
     condition     = !(var.config.shadowsocks_enable && var.config.xray_enable) || var.config.shadowsocks_libev_port != var.config.xray_port
     error_message = "Port conflict: shadowsocks_libev_port and xray_port must not be the same when both protocols are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.anytls_enable && var.config.shadowsocks_enable) || var.config.anytls_port != var.config.shadowsocks_libev_port
+    error_message = "Port conflict: anytls_port and shadowsocks_libev_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.anytls_enable && var.config.hysteria_enable) || var.config.anytls_port != var.config.hysteria_port
+    error_message = "Port conflict: anytls_port and hysteria_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.anytls_enable && var.config.xray_enable) || var.config.anytls_port != var.config.xray_port
+    error_message = "Port conflict: anytls_port and xray_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.tuic_enable && var.config.shadowsocks_enable) || var.config.tuic_port != var.config.shadowsocks_libev_port
+    error_message = "Port conflict: tuic_port and shadowsocks_libev_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.tuic_enable && var.config.hysteria_enable) || var.config.tuic_port != var.config.hysteria_port
+    error_message = "Port conflict: tuic_port and hysteria_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.tuic_enable && var.config.xray_enable) || var.config.tuic_port != var.config.xray_port
+    error_message = "Port conflict: tuic_port and xray_port must differ when both are enabled."
+  }
+
+  validation {
+    condition     = !(var.config.tuic_enable && var.config.anytls_enable) || var.config.tuic_port != var.config.anytls_port
+    error_message = "Port conflict: tuic_port and anytls_port must differ when both are enabled."
   }
 }

@@ -40,7 +40,15 @@
       "xray_port": 443,
       "xray_proxy_url": "https://bing.com",
       "xray_private_key": "",
-      "xray_public_key": ""
+      "xray_public_key": "",
+      "anytls_enable": false,
+      "anytls_port": 8444,
+      "anytls_password_length": 16,
+      "anytls_proxy_url": "https://bing.com",
+      "tuic_enable": false,
+      "tuic_port": 8445,
+      "tuic_password_length": 16,
+      "tuic_proxy_url": "https://bing.com"
     }
   ],
   "xray_instances": [
@@ -53,6 +61,28 @@
       "xray_proxy_url": "https://bing.com",
       "xray_private_key": "<用 xray x25519 生成的 Private key>",
       "xray_public_key": "<用 xray x25519 生成的 Public key>"
+    }
+  ],
+  "anytls_instances": [
+    {
+      "region": "ap-northeast-1",
+      "instance_name": "anytls-1",
+      "availability_zone": "ap-northeast-1a",
+      "create_static_ip": false,
+      "anytls_port": 8444,
+      "anytls_password_length": 16,
+      "anytls_proxy_url": "https://bing.com"
+    }
+  ],
+  "tuic_instances": [
+    {
+      "region": "ap-northeast-1",
+      "instance_name": "tuic-1",
+      "availability_zone": "ap-northeast-1a",
+      "create_static_ip": false,
+      "tuic_port": 8445,
+      "tuic_password_length": 16,
+      "tuic_proxy_url": "https://bing.com"
     }
   ]
 }

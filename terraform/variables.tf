@@ -41,7 +41,7 @@ variable "hysteria_instances" {
 }
 
 variable "combined_instances" {
-  description = "aws lightsail combined (shadowsocks + hysteria2) instance config"
+  description = "aws lightsail combined (shadowsocks + hysteria2 + xray + anytls + tuic) instance config"
   type = list(object({
     region                            = string # aws lightsail region
     instance_name                     = string # aws lightsail instance name
@@ -58,8 +58,16 @@ variable "combined_instances" {
     xray_enable                       = bool   # 是否启用 xray (VLESS+REALITY)
     xray_port                         = number # xray listen port，建议使用 443
     xray_proxy_url                    = string # REALITY 伪装目标 URL，如 https://bing.com
-    xray_private_key                  = string # x25519 私阥（base64url，无填充）
-    xray_public_key                   = string # x25519 公阥（base64url，无填充）
+    xray_private_key                  = string # x25519 私钥（base64url，无填充）
+    xray_public_key                   = string # x25519 公钥（base64url，无填充）
+    anytls_enable                     = bool   # 是否启用 anytls (sing-box)
+    anytls_port                       = optional(number, 8444) # anytls listen port，默认 8444
+    anytls_password_length            = number # anytls password length
+    anytls_proxy_url                  = string # masquerade proxy url, e.g. https://bing.com
+    tuic_enable                       = bool   # 是否启用 tuic v5 (sing-box)
+    tuic_port                         = optional(number, 8445) # tuic listen port，默认 8445
+    tuic_password_length              = number # tuic password length
+    tuic_proxy_url                    = string # masquerade proxy url, e.g. https://bing.com
   }))
   default = []
   validation {
@@ -84,5 +92,41 @@ variable "xray_instances" {
   validation {
     condition     = length(var.xray_instances) == length(toset([for s in var.xray_instances : format("%s-%s", s.region, s.instance_name)]))
     error_message = "The xray_instances instance_name must be unique within a region."
+  }
+}
+
+variable "anytls_instances" {
+  description = "aws lightsail anytls (sing-box) instance config"
+  type = list(object({
+    region                 = string # aws lightsail region
+    instance_name          = string # aws lightsail instance name
+    availability_zone      = string # aws lightsail instance availability zone
+    create_static_ip      = bool   # create lightsail static ip
+    anytls_port            = optional(number, 8444) # anytls listen port，默认 8444
+    anytls_password_length = number # anytls password length
+    anytls_proxy_url       = string # masquerade proxy url, e.g. https://bing.com
+  }))
+  default = []
+  validation {
+    condition     = length(var.anytls_instances) == length(toset([for s in var.anytls_instances : format("%s-%s", s.region, s.instance_name)]))
+    error_message = "The anytls_instances instance_name must be unique within a region."
+  }
+}
+
+variable "tuic_instances" {
+  description = "aws lightsail tuic v5 (sing-box) instance config"
+  type = list(object({
+    region               = string # aws lightsail region
+    instance_name        = string # aws lightsail instance name
+    availability_zone    = string # aws lightsail instance availability zone
+    create_static_ip    = bool   # create lightsail static ip
+    tuic_port            = optional(number, 8445) # tuic listen port，默认 8445
+    tuic_password_length = number # tuic password length
+    tuic_proxy_url       = string # masquerade proxy url, e.g. https://bing.com
+  }))
+  default = []
+  validation {
+    condition     = length(var.tuic_instances) == length(toset([for s in var.tuic_instances : format("%s-%s", s.region, s.instance_name)]))
+    error_message = "The tuic_instances instance_name must be unique within a region."
   }
 }

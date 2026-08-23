@@ -53,6 +53,82 @@ locals {
     var.config.xray_public_key,
     format("%s-%s", var.config.region, var.config.instance_name)
   ) : null
+
+  # AnyTLS
+  anytls_port                  = var.config.anytls_port
+  anytls_proxy_host_with_path = replace(replace(var.config.anytls_proxy_url, "https://", ""), "http://", "")
+  anytls_sni                  = split("/", local.anytls_proxy_host_with_path)[0]
+
+  anytls_url = var.config.anytls_enable ? format(
+    "anytls://%s@%s:%d?sni=%s&insecure=1#%s",
+    urlencode(random_password.anytls_password[0].result),
+    local.ip_address,
+    local.anytls_port,
+    local.anytls_sni,
+    format("%s-%s", var.config.region, var.config.instance_name)
+  ) : null
+
+  # TUIC v5
+  tuic_port                  = var.config.tuic_port
+  tuic_proxy_host_with_path = replace(replace(var.config.tuic_proxy_url, "https://", ""), "http://", "")
+  tuic_sni                  = split("/", local.tuic_proxy_host_with_path)[0]
+
+  tuic_url = var.config.tuic_enable ? format(
+    "tuic://%s:%s@%s:%d?sni=%s&congestion_control=bbr&insecure=1#%s",
+    random_uuid.tuic_user_uuid[0].result,
+    urlencode(random_password.tuic_password[0].result),
+    local.ip_address,
+    local.tuic_port,
+    local.tuic_sni,
+    format("%s-%s", var.config.region, var.config.instance_name)
+  ) : null
+
+  # sing-box SNI: prioritize anytls, then tuic
+  singbox_sni = var.config.anytls_enable ? local.anytls_sni : local.tuic_sni
+
+  singbox_anytls_inbound = var.config.anytls_enable ? {
+    "type"        = "anytls",
+    "tag"         = "anytls-in",
+    "listen"      = "::",
+    "listen_port" = local.anytls_port,
+    "users"       = [
+      {
+        "name"     = "default",
+        "password" = random_password.anytls_password[0].result
+      }
+    ],
+    "tls" = {
+      "enabled"          = true,
+      "certificate_path" = "/etc/sing-box/server.crt",
+      "key_path"         = "/etc/sing-box/server.key"
+    }
+  } : null
+
+  singbox_tuic_inbound = var.config.tuic_enable ? {
+    "type"               = "tuic",
+    "tag"                = "tuic-in",
+    "listen"             = "::",
+    "listen_port"        = local.tuic_port,
+    "users"              = [
+      {
+        "uuid"     = random_uuid.tuic_user_uuid[0].result,
+        "password" = random_password.tuic_password[0].result
+      }
+    ],
+    "congestion_control" = "bbr",
+    "tls" = {
+      "enabled"          = true,
+      "certificate_path" = "/etc/sing-box/server.crt",
+      "key_path"         = "/etc/sing-box/server.key"
+    }
+  } : null
+
+  singbox_inbounds = compact([
+    local.singbox_anytls_inbound != null ? jsonencode(local.singbox_anytls_inbound) : "",
+    local.singbox_tuic_inbound != null ? jsonencode(local.singbox_tuic_inbound) : ""
+  ])
+
+  singbox_inbounds_json = join(",\n", local.singbox_inbounds)
 }
 
 resource "aws_lightsail_static_ip_attachment" "instance" {
@@ -90,6 +166,24 @@ resource "random_uuid" "xray_user_id" {
   count = var.config.xray_enable ? 1 : 0
 }
 
+resource "random_password" "anytls_password" {
+  count            = var.config.anytls_enable ? 1 : 0
+  length           = var.config.anytls_password_length
+  special          = true
+  override_special = "_"
+}
+
+resource "random_uuid" "tuic_user_uuid" {
+  count = var.config.tuic_enable ? 1 : 0
+}
+
+resource "random_password" "tuic_password" {
+  count            = var.config.tuic_enable ? 1 : 0
+  length           = var.config.tuic_password_length
+  special          = true
+  override_special = "_"
+}
+
 resource "aws_lightsail_instance" "instance" {
   name              = format("%s-%s", "instance", var.config.instance_name)
   availability_zone = var.config.availability_zone
@@ -107,6 +201,8 @@ set -eux
 ENABLE_SS=${var.config.shadowsocks_enable ? "true" : "false"}
 ENABLE_HY=${var.config.hysteria_enable ? "true" : "false"}
 ENABLE_XRAY=${var.config.xray_enable ? "true" : "false"}
+ENABLE_ANYTLS=${var.config.anytls_enable ? "true" : "false"}
+ENABLE_TUIC=${var.config.tuic_enable ? "true" : "false"}
 
 apt update
 apt install -y curl openssl ca-certificates
@@ -210,6 +306,35 @@ EOF
   systemctl enable xray
   systemctl restart xray
 fi
+
+# ── sing-box (AnyTLS / TUIC) ─────────────────────────────────────────────────
+if [ "$ENABLE_ANYTLS" = "true" ] || [ "$ENABLE_TUIC" = "true" ]; then
+  curl -fsSL https://sing-box.app/deb-install.sh | bash
+
+  mkdir -p /etc/sing-box
+
+  openssl req -x509 -nodes -newkey ec -pkeyopt ec_paramgen_curve:P-256 \
+    -keyout /etc/sing-box/server.key \
+    -out /etc/sing-box/server.crt \
+    -subj "/CN=${local.singbox_sni}" -days 36500
+  chmod 644 /etc/sing-box/server.key /etc/sing-box/server.crt
+
+  cat > /etc/sing-box/config.json <<'EOF'
+{
+  "inbounds": [
+${local.singbox_inbounds_json}
+  ],
+  "outbounds": [
+    {
+      "type": "direct"
+    }
+  ]
+}
+EOF
+
+  systemctl enable sing-box
+  systemctl restart sing-box
+fi
 EOT
 }
 
@@ -238,22 +363,37 @@ resource "alicloud_oss_bucket_object" "object" {
     "public_ip_address"  = aws_lightsail_instance.instance.public_ip_address,
     "static_ip"          = var.config.create_static_ip ? aws_lightsail_static_ip.instance[0].ip_address : ""
     "shadowsocks_config" = var.config.shadowsocks_enable ? local.ss_config : null,
-    "shadowsocks_url"     = var.config.shadowsocks_enable ? local.shadowsocks_url : null,
-    "hysteria_config" = var.config.hysteria_enable ? {
+    "shadowsocks_url"    = var.config.shadowsocks_enable ? local.shadowsocks_url : null,
+    "hysteria_config"    = var.config.hysteria_enable ? {
       "listen"    = local.hysteria_port,
       "password"  = random_password.hy_password[0].result,
       "sni"       = local.sni,
       "proxy_url" = var.config.hysteria_proxy_url,
     } : null,
-    "hysteria_url" = var.config.hysteria_enable ? local.hysteria_url : null,
-    "xray_config" = var.config.xray_enable ? {
+    "hysteria_url"       = var.config.hysteria_enable ? local.hysteria_url : null,
+    "xray_config"        = var.config.xray_enable ? {
       "port"       = var.config.xray_port,
       "uuid"       = random_uuid.xray_user_id[0].result,
       "public_key" = var.config.xray_public_key,
       "sni"        = local.xray_dest_host,
       "proxy_url"  = var.config.xray_proxy_url,
     } : null,
-    "xray_url" = var.config.xray_enable ? local.xray_url : null,
+    "xray_url"           = var.config.xray_enable ? local.xray_url : null,
+    "anytls_config"      = var.config.anytls_enable ? {
+      "listen"    = local.anytls_port,
+      "password"  = random_password.anytls_password[0].result,
+      "sni"       = local.anytls_sni,
+      "proxy_url" = var.config.anytls_proxy_url,
+    } : null,
+    "anytls_url"         = var.config.anytls_enable ? local.anytls_url : null,
+    "tuic_config"        = var.config.tuic_enable ? {
+      "listen"    = local.tuic_port,
+      "uuid"      = random_uuid.tuic_user_uuid[0].result,
+      "password"  = random_password.tuic_password[0].result,
+      "sni"       = local.tuic_sni,
+      "proxy_url" = var.config.tuic_proxy_url,
+    } : null,
+    "tuic_url"           = var.config.tuic_enable ? local.tuic_url : null,
   })
 
   depends_on = [

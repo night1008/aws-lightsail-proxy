@@ -27,10 +27,12 @@
 ## 项目结构
 ```
 ├── terraform/         # Terraform 配置（部署 Lightsail 实例）
-│   ├── lightsail-combined/     # 多协议合一模块
+│   ├── lightsail-combined/     # 多协议合一模块 (SS + HY2 + Xray + AnyTLS + TUIC)
 │   ├── lightsail-hysteria/     # Hysteria2 独立模块
 │   ├── lightsail-shadowsocks/  # Shadowsocks 独立模块
 │   ├── lightsail-xray/         # Xray VLESS+REALITY 独立模块
+│   ├── lightsail-anytls/       # AnyTLS (sing-box) 独立模块
+│   ├── lightsail-tuic/         # TUIC v5 (sing-box) 独立模块
 │   └── scripts/                # 工具脚本
 ├── web/               # Next.js 可视化配置页面（部署到 Vercel）
 └── .github/workflows/ # GitHub Actions CI（触发 Terraform）
@@ -43,7 +45,9 @@
 | `lightsail-shadowsocks` | Shadowsocks-libev | 8388（可配置） |
 | `lightsail-hysteria` | Hysteria2 | 8443（可配置） |
 | `lightsail-xray` | VLESS + REALITY | 443（可配置） |
-| `lightsail-combined` | 以上三种协议按需组合 | — |
+| `lightsail-anytls` | AnyTLS (sing-box) | 8444（可配置） |
+| `lightsail-tuic` | TUIC v5 (sing-box) | 8445（可配置） |
+| `lightsail-combined` | 以上五种协议按需组合 | — |
 
 ---
 
@@ -97,6 +101,8 @@ terraform/outputs/
   shadowsocks-configs/
   hysteria-configs/
   xray-configs/
+  anytls-configs/
+  tuic-configs/
   combined-configs/
     <region>-<instance_name>.json
 ```
@@ -106,6 +112,8 @@ terraform/outputs/
 | shadowsocks | `shadowsocks_url` | `ss://BASE64@host:port#tag` |
 | hysteria | `hysteria_url` | `hysteria2://pass@host:port?sni=...&insecure=1#tag` |
 | xray | `xray_url` | `vless://uuid@host:443?security=reality&...#tag` |
+| anytls | `anytls_url` | `anytls://pass@host:port?sni=...&insecure=1#tag` |
+| tuic | `tuic_url` | `tuic://uuid:pass@host:port?sni=...&congestion_control=bbr&insecure=1#tag` |
 | combined | 以上字段按启用协议包含 | — |
 
 ### 下载 OSS 配置文件
