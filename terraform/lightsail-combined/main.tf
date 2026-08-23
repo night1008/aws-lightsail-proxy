@@ -55,7 +55,7 @@ locals {
   ) : null
 
   # AnyTLS
-  anytls_port                  = var.config.anytls_port
+  anytls_port                 = var.config.anytls_port
   anytls_proxy_host_with_path = replace(replace(var.config.anytls_proxy_url, "https://", ""), "http://", "")
   anytls_sni                  = split("/", local.anytls_proxy_host_with_path)[0]
 
@@ -69,7 +69,7 @@ locals {
   ) : null
 
   # TUIC v5
-  tuic_port                  = var.config.tuic_port
+  tuic_port                 = var.config.tuic_port
   tuic_proxy_host_with_path = replace(replace(var.config.tuic_proxy_url, "https://", ""), "http://", "")
   tuic_sni                  = split("/", local.tuic_proxy_host_with_path)[0]
 
@@ -91,7 +91,7 @@ locals {
     "tag"         = "anytls-in",
     "listen"      = "::",
     "listen_port" = local.anytls_port,
-    "users"       = [
+    "users" = [
       {
         "name"     = "default",
         "password" = random_password.anytls_password[0].result
@@ -105,11 +105,11 @@ locals {
   } : null
 
   singbox_tuic_inbound = var.config.tuic_enable ? {
-    "type"               = "tuic",
-    "tag"                = "tuic-in",
-    "listen"             = "::",
-    "listen_port"        = local.tuic_port,
-    "users"              = [
+    "type"        = "tuic",
+    "tag"         = "tuic-in",
+    "listen"      = "::",
+    "listen_port" = local.tuic_port,
+    "users" = [
       {
         "uuid"     = random_uuid.tuic_user_uuid[0].result,
         "password" = random_password.tuic_password[0].result
@@ -364,36 +364,36 @@ resource "alicloud_oss_bucket_object" "object" {
     "static_ip"          = var.config.create_static_ip ? aws_lightsail_static_ip.instance[0].ip_address : ""
     "shadowsocks_config" = var.config.shadowsocks_enable ? local.ss_config : null,
     "shadowsocks_url"    = var.config.shadowsocks_enable ? local.shadowsocks_url : null,
-    "hysteria_config"    = var.config.hysteria_enable ? {
+    "hysteria_config" = var.config.hysteria_enable ? {
       "listen"    = local.hysteria_port,
       "password"  = random_password.hy_password[0].result,
       "sni"       = local.sni,
       "proxy_url" = var.config.hysteria_proxy_url,
     } : null,
-    "hysteria_url"       = var.config.hysteria_enable ? local.hysteria_url : null,
-    "xray_config"        = var.config.xray_enable ? {
+    "hysteria_url" = var.config.hysteria_enable ? local.hysteria_url : null,
+    "xray_config" = var.config.xray_enable ? {
       "port"       = var.config.xray_port,
       "uuid"       = random_uuid.xray_user_id[0].result,
       "public_key" = var.config.xray_public_key,
       "sni"        = local.xray_dest_host,
       "proxy_url"  = var.config.xray_proxy_url,
     } : null,
-    "xray_url"           = var.config.xray_enable ? local.xray_url : null,
-    "anytls_config"      = var.config.anytls_enable ? {
+    "xray_url" = var.config.xray_enable ? local.xray_url : null,
+    "anytls_config" = var.config.anytls_enable ? {
       "listen"    = local.anytls_port,
       "password"  = random_password.anytls_password[0].result,
       "sni"       = local.anytls_sni,
       "proxy_url" = var.config.anytls_proxy_url,
     } : null,
-    "anytls_url"         = var.config.anytls_enable ? local.anytls_url : null,
-    "tuic_config"        = var.config.tuic_enable ? {
+    "anytls_url" = var.config.anytls_enable ? local.anytls_url : null,
+    "tuic_config" = var.config.tuic_enable ? {
       "listen"    = local.tuic_port,
       "uuid"      = random_uuid.tuic_user_uuid[0].result,
       "password"  = random_password.tuic_password[0].result,
       "sni"       = local.tuic_sni,
       "proxy_url" = var.config.tuic_proxy_url,
     } : null,
-    "tuic_url"           = var.config.tuic_enable ? local.tuic_url : null,
+    "tuic_url" = var.config.tuic_enable ? local.tuic_url : null,
   })
 
   depends_on = [

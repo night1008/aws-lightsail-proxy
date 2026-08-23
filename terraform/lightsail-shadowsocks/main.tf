@@ -1,7 +1,7 @@
 locals {
   output_oss_object_key  = "outputs/shadowsocks-configs/${var.config.region}/${var.config.instance_name}.json"
   local_output_file_name = "outputs/shadowsocks-configs/${var.config.region}-${var.config.instance_name}.json"
-  
+
   shadowsocks_libev_config = {
     "server"      = ["0.0.0.0"],
     "mode"        = "tcp_and_udp",
@@ -97,7 +97,7 @@ resource "alicloud_oss_bucket_object" "object" {
       format("%s-%s", var.config.region, var.config.instance_name)
     )
   })
-  
+
   depends_on = [
     aws_lightsail_instance_public_ports.instance
   ]
