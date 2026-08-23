@@ -66,7 +66,7 @@ provider "aws" {
 }
 
 locals {
-  # 归一化单协议配置为 combined 格式，方便统一部署
+  # 归一化单协议配置，未启用的协议自动使用组合模块的默认值
   normalized_shadowsocks = [for s in var.shadowsocks_instances : {
     region                            = s.region
     instance_name                     = s.instance_name
@@ -76,135 +76,51 @@ locals {
     shadowsocks_libev_port            = s.shadowsocks_libev_port
     shadowsocks_libev_password_length = s.shadowsocks_libev_password_length
     shadowsocks_libev_method          = s.shadowsocks_libev_method
-    hysteria_enable                   = false
-    hysteria_port                     = 8443
-    hysteria_password_length          = 10
-    hysteria_proxy_url                = "https://bing.com"
-    xray_enable                       = false
-    xray_port                         = 443
-    xray_proxy_url                    = "https://bing.com"
-    xray_private_key                  = ""
-    xray_public_key                   = ""
-    anytls_enable                     = false
-    anytls_port                       = 8444
-    anytls_password_length            = 10
-    anytls_proxy_url                  = "https://bing.com"
-    tuic_enable                       = false
-    tuic_port                         = 8445
-    tuic_password_length              = 10
-    tuic_proxy_url                    = "https://bing.com"
   }]
 
   normalized_hysteria = [for s in var.hysteria_instances : {
-    region                            = s.region
-    instance_name                     = s.instance_name
-    availability_zone                 = s.availability_zone
-    create_static_ip                  = s.create_static_ip
-    shadowsocks_enable                = false
-    shadowsocks_libev_port            = 8388
-    shadowsocks_libev_password_length = 10
-    shadowsocks_libev_method          = "chacha20-ietf-poly1305"
-    hysteria_enable                   = true
-    hysteria_port                     = s.hysteria_port
-    hysteria_password_length          = s.hysteria_password_length
-    hysteria_proxy_url                = s.hysteria_proxy_url
-    xray_enable                       = false
-    xray_port                         = 443
-    xray_proxy_url                    = "https://bing.com"
-    xray_private_key                  = ""
-    xray_public_key                   = ""
-    anytls_enable                     = false
-    anytls_port                       = 8444
-    anytls_password_length            = 10
-    anytls_proxy_url                  = "https://bing.com"
-    tuic_enable                       = false
-    tuic_port                         = 8445
-    tuic_password_length              = 10
-    tuic_proxy_url                    = "https://bing.com"
+    region                   = s.region
+    instance_name            = s.instance_name
+    availability_zone        = s.availability_zone
+    create_static_ip         = s.create_static_ip
+    hysteria_enable          = true
+    hysteria_port            = s.hysteria_port
+    hysteria_password_length = s.hysteria_password_length
+    hysteria_proxy_url       = s.hysteria_proxy_url
   }]
 
   normalized_xray = [for s in var.xray_instances : {
-    region                            = s.region
-    instance_name                     = s.instance_name
-    availability_zone                 = s.availability_zone
-    create_static_ip                  = s.create_static_ip
-    shadowsocks_enable                = false
-    shadowsocks_libev_port            = 8388
-    shadowsocks_libev_password_length = 10
-    shadowsocks_libev_method          = "chacha20-ietf-poly1305"
-    hysteria_enable                   = false
-    hysteria_port                     = 8443
-    hysteria_password_length          = 10
-    hysteria_proxy_url                = "https://bing.com"
-    xray_enable                       = true
-    xray_port                         = s.xray_port
-    xray_proxy_url                    = s.xray_proxy_url
-    xray_private_key                  = s.xray_private_key
-    xray_public_key                   = s.xray_public_key
-    anytls_enable                     = false
-    anytls_port                       = 8444
-    anytls_password_length            = 10
-    anytls_proxy_url                  = "https://bing.com"
-    tuic_enable                       = false
-    tuic_port                         = 8445
-    tuic_password_length              = 10
-    tuic_proxy_url                    = "https://bing.com"
+    region            = s.region
+    instance_name     = s.instance_name
+    availability_zone = s.availability_zone
+    create_static_ip  = s.create_static_ip
+    xray_enable       = true
+    xray_port         = s.xray_port
+    xray_proxy_url    = s.xray_proxy_url
+    xray_private_key  = s.xray_private_key
+    xray_public_key   = s.xray_public_key
   }]
 
   normalized_anytls = [for s in var.anytls_instances : {
-    region                            = s.region
-    instance_name                     = s.instance_name
-    availability_zone                 = s.availability_zone
-    create_static_ip                  = s.create_static_ip
-    shadowsocks_enable                = false
-    shadowsocks_libev_port            = 8388
-    shadowsocks_libev_password_length = 10
-    shadowsocks_libev_method          = "chacha20-ietf-poly1305"
-    hysteria_enable                   = false
-    hysteria_port                     = 8443
-    hysteria_password_length          = 10
-    hysteria_proxy_url                = "https://bing.com"
-    xray_enable                       = false
-    xray_port                         = 443
-    xray_proxy_url                    = "https://bing.com"
-    xray_private_key                  = ""
-    xray_public_key                   = ""
-    anytls_enable                     = true
-    anytls_port                       = s.anytls_port
-    anytls_password_length            = s.anytls_password_length
-    anytls_proxy_url                  = s.anytls_proxy_url
-    tuic_enable                       = false
-    tuic_port                         = 8445
-    tuic_password_length              = 10
-    tuic_proxy_url                    = "https://bing.com"
+    region                 = s.region
+    instance_name          = s.instance_name
+    availability_zone      = s.availability_zone
+    create_static_ip       = s.create_static_ip
+    anytls_enable          = true
+    anytls_port            = s.anytls_port
+    anytls_password_length = s.anytls_password_length
+    anytls_proxy_url       = s.anytls_proxy_url
   }]
 
   normalized_tuic = [for s in var.tuic_instances : {
-    region                            = s.region
-    instance_name                     = s.instance_name
-    availability_zone                 = s.availability_zone
-    create_static_ip                  = s.create_static_ip
-    shadowsocks_enable                = false
-    shadowsocks_libev_port            = 8388
-    shadowsocks_libev_password_length = 10
-    shadowsocks_libev_method          = "chacha20-ietf-poly1305"
-    hysteria_enable                   = false
-    hysteria_port                     = 8443
-    hysteria_password_length          = 10
-    hysteria_proxy_url                = "https://bing.com"
-    xray_enable                       = false
-    xray_port                         = 443
-    xray_proxy_url                    = "https://bing.com"
-    xray_private_key                  = ""
-    xray_public_key                   = ""
-    anytls_enable                     = false
-    anytls_port                       = 8444
-    anytls_password_length            = 10
-    anytls_proxy_url                  = "https://bing.com"
-    tuic_enable                       = true
-    tuic_port                         = s.tuic_port
-    tuic_password_length              = s.tuic_password_length
-    tuic_proxy_url                    = s.tuic_proxy_url
+    region               = s.region
+    instance_name        = s.instance_name
+    availability_zone    = s.availability_zone
+    create_static_ip     = s.create_static_ip
+    tuic_enable          = true
+    tuic_port            = s.tuic_port
+    tuic_password_length = s.tuic_password_length
+    tuic_proxy_url       = s.tuic_proxy_url
   }]
 
   all_combined_instances = concat(
