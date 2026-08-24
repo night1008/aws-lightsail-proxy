@@ -139,9 +139,11 @@ export default function Home() {
 
   function handleAddInstanceConfig() {
     const configs = [...instanceConfigs]
-    configs.push(Object.assign({}, defaultInstanceConfig, {
-      instance_name: `instance-${configs.length + 1}`
-    }))
+    configs.push(
+      normalizeInstanceConfig({
+        instance_name: `instance-${configs.length + 1}`,
+      })
+    )
     setInstanceConfigs(configs)
   }
 
@@ -335,9 +337,9 @@ export default function Home() {
 
                   <div className="border-t pt-3">
                     <div className="flex items-center gap-2 mb-2">
-                      <div className={`w-2 h-2 rounded-full ${instance.tuic_enable ? 'bg-emerald-500' : 'bg-muted-foreground/30'}`} />
+                      <div className={`w-2 h-2 rounded-full ${instance.tuic_enable ? 'bg-rose-500' : 'bg-muted-foreground/30'}`} />
                       <span className="font-semibold text-sm">TUIC v5</span>
-                      {instance.tuic_enable ? <span className="text-xs text-emerald-600">已启用</span> : <span className="text-xs text-muted-foreground">未启用</span>}
+                      {instance.tuic_enable ? <span className="text-xs text-rose-600">已启用</span> : <span className="text-xs text-muted-foreground">未启用</span>}
                     </div>
                     {instance.tuic_enable && (
                       <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 text-sm ml-4">
@@ -639,7 +641,7 @@ export default function Home() {
                           <Label className="text-xs">anytls_port</Label>
                           <Input
                             type="number"
-                            value={instance.anytls_port ?? 8444}
+                            value={instance.anytls_port || 8444}
                             onChange={(e) => {
                               const raw = e.target.value
                               handleInstanceChange(index, 'anytls_port', raw === '' ? '' : parseInt(raw) || 0)
@@ -651,7 +653,7 @@ export default function Home() {
                           <Label className="text-xs">anytls_password_length</Label>
                           <Input
                             type="number"
-                            value={instance.anytls_password_length}
+                            value={instance.anytls_password_length || 10}
                             onChange={(e) => {
                               const raw = e.target.value
                               handleInstanceChange(index, 'anytls_password_length', raw === '' ? '' : parseInt(raw) || 0)
@@ -663,7 +665,7 @@ export default function Home() {
                           <Label className="text-xs">anytls_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.anytls_proxy_url}
+                            value={instance.anytls_proxy_url || 'https://bing.com'}
                             onChange={(e) => handleInstanceChange(index, 'anytls_proxy_url', e.target.value)}
                             disabled={!instance.anytls_enable}
                           />
@@ -676,7 +678,7 @@ export default function Home() {
                       <CardHeader className="border-b bg-muted/20">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <div className={`w-1.5 h-1.5 rounded-full ${instance.tuic_enable ? 'bg-emerald-500' : 'bg-muted-foreground'}`} />
+                            <div className={`w-1.5 h-1.5 rounded-full ${instance.tuic_enable ? 'bg-rose-500' : 'bg-muted-foreground'}`} />
                             <span className="font-semibold text-sm">TUIC v5</span>
                           </div>
                           <Switch
@@ -690,7 +692,7 @@ export default function Home() {
                           <Label className="text-xs">tuic_port</Label>
                           <Input
                             type="number"
-                            value={instance.tuic_port ?? 8445}
+                            value={instance.tuic_port || 8445}
                             onChange={(e) => {
                               const raw = e.target.value
                               handleInstanceChange(index, 'tuic_port', raw === '' ? '' : parseInt(raw) || 0)
@@ -702,7 +704,7 @@ export default function Home() {
                           <Label className="text-xs">tuic_password_length</Label>
                           <Input
                             type="number"
-                            value={instance.tuic_password_length}
+                            value={instance.tuic_password_length || 10}
                             onChange={(e) => {
                               const raw = e.target.value
                               handleInstanceChange(index, 'tuic_password_length', raw === '' ? '' : parseInt(raw) || 0)
@@ -714,7 +716,7 @@ export default function Home() {
                           <Label className="text-xs">tuic_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.tuic_proxy_url}
+                            value={instance.tuic_proxy_url || 'https://bing.com'}
                             onChange={(e) => handleInstanceChange(index, 'tuic_proxy_url', e.target.value)}
                             disabled={!instance.tuic_enable}
                           />

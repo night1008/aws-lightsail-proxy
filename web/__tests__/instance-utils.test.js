@@ -51,6 +51,23 @@ describe('normalizeInstanceConfig', () => {
     })
     expect(result.availability_zone).toBe('ap-northeast-1c')
   })
+
+  it('normalizes zero or empty protocol fields to defaults', () => {
+    const result = normalizeInstanceConfig({
+      anytls_port: 0,
+      anytls_password_length: 0,
+      anytls_proxy_url: '',
+      tuic_port: 0,
+      tuic_password_length: 0,
+      tuic_proxy_url: '',
+    })
+    expect(result.anytls_port).toBe(8444)
+    expect(result.anytls_password_length).toBe(10)
+    expect(result.anytls_proxy_url).toBe('https://bing.com')
+    expect(result.tuic_port).toBe(8445)
+    expect(result.tuic_password_length).toBe(10)
+    expect(result.tuic_proxy_url).toBe('https://bing.com')
+  })
 })
 
 describe('validateInstanceConfig', () => {

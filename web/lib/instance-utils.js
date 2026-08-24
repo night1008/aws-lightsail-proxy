@@ -29,9 +29,28 @@ export const defaultInstanceConfig = {
 }
 
 export function normalizeInstanceConfig(instance) {
+  const raw = instance || {}
   const config = {
     ...defaultInstanceConfig,
-    ...(instance || {}),
+    ...raw,
+    shadowsocks_libev_port: raw.shadowsocks_libev_port || defaultInstanceConfig.shadowsocks_libev_port,
+    shadowsocks_libev_password_length: raw.shadowsocks_libev_password_length || defaultInstanceConfig.shadowsocks_libev_password_length,
+    shadowsocks_libev_method: raw.shadowsocks_libev_method || defaultInstanceConfig.shadowsocks_libev_method,
+
+    hysteria_port: raw.hysteria_port || defaultInstanceConfig.hysteria_port,
+    hysteria_password_length: raw.hysteria_password_length || defaultInstanceConfig.hysteria_password_length,
+    hysteria_proxy_url: raw.hysteria_proxy_url || defaultInstanceConfig.hysteria_proxy_url,
+
+    xray_port: raw.xray_port || defaultInstanceConfig.xray_port,
+    xray_proxy_url: raw.xray_proxy_url || defaultInstanceConfig.xray_proxy_url,
+
+    anytls_port: raw.anytls_port || defaultInstanceConfig.anytls_port,
+    anytls_password_length: raw.anytls_password_length || defaultInstanceConfig.anytls_password_length,
+    anytls_proxy_url: raw.anytls_proxy_url || defaultInstanceConfig.anytls_proxy_url,
+
+    tuic_port: raw.tuic_port || defaultInstanceConfig.tuic_port,
+    tuic_password_length: raw.tuic_password_length || defaultInstanceConfig.tuic_password_length,
+    tuic_proxy_url: raw.tuic_proxy_url || defaultInstanceConfig.tuic_proxy_url,
   }
 
   const regionZones = lightsail_availability_zones[config.region]
