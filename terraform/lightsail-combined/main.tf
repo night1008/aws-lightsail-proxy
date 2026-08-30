@@ -74,7 +74,7 @@ locals {
   tuic_sni                  = split("/", local.tuic_proxy_host_with_path)[0]
 
   tuic_url = var.config.tuic_enable ? format(
-    "tuic://%s:%s@%s:%d?sni=%s&congestion_control=bbr&insecure=1#%s",
+    "tuic://%s:%s@%s:%d?sni=%s&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1&insecure=1#%s",
     random_uuid.tuic_user_uuid[0].result,
     urlencode(random_password.tuic_password[0].result),
     local.ip_address,
@@ -85,6 +85,14 @@ locals {
 
   # sing-box SNI: prioritize anytls, then tuic
   singbox_sni = var.config.anytls_enable ? local.anytls_sni : local.tuic_sni
+
+  # 自签证书需覆盖所有已启用协议的 SNI：两个协议的 proxy_url 不同时，
+  # 只放 CN 会让另一个协议的 SNI 对不上；且 Go 系客户端只校验 SAN，不看 CN。
+  singbox_snis = distinct(compact([
+    var.config.anytls_enable ? local.anytls_sni : "",
+    var.config.tuic_enable ? local.tuic_sni : "",
+  ]))
+  singbox_san = join(",", [for s in local.singbox_snis : "DNS:${s}"])
 
   singbox_anytls_inbound = var.config.anytls_enable ? {
     "type"        = "anytls",
@@ -117,7 +125,10 @@ locals {
     ],
     "congestion_control" = "bbr",
     "tls" = {
-      "enabled"          = true,
+      "enabled" = true,
+      # 仅 TUIC 加 alpn：QUIC 客户端强制服务端协商 ALPN，不配握手失败；
+      # anytls 走 TCP 不经 QUIC，不能加 alpn。
+      "alpn"             = ["h3"],
       "certificate_path" = "/etc/sing-box/server.crt",
       "key_path"         = "/etc/sing-box/server.key"
     }
@@ -316,7 +327,8 @@ if [ "$ENABLE_ANYTLS" = "true" ] || [ "$ENABLE_TUIC" = "true" ]; then
   openssl req -x509 -nodes -newkey ec -pkeyopt ec_paramgen_curve:P-256 \
     -keyout /etc/sing-box/server.key \
     -out /etc/sing-box/server.crt \
-    -subj "/CN=${local.singbox_sni}" -days 36500
+    -subj "/CN=${local.singbox_sni}" \
+    -addext "subjectAltName=${local.singbox_san}" -days 36500
   chmod 644 /etc/sing-box/server.key /etc/sing-box/server.crt
 
   cat > /etc/sing-box/config.json <<'EOF'

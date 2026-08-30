@@ -13,9 +13,15 @@ locals {
     : aws_lightsail_instance.instance.public_ip_address
   )
 
-  # tuic://<uuid>:<password>@<host>:<port>?sni=<sni>&congestion_control=bbr&insecure=1#<tag>
+  # tuic://<uuid>:<password>@<host>:<port>?sni=<sni>&alpn=h3&congestion_control=bbr&udp_relay_mode=native#<tag>
+  #
+  # alpn=h3 必须与服务端一致：QUIC 客户端（quic-go/quinn 系，含 sing-box、Shadowrocket）
+  # 强制服务端协商 ALPN，服务端 tls 不配 alpn 时握手直接失败（实测：
+  # "server did not select an ALPN protocol"）。anytls 走 TCP 不经 QUIC，不能加 alpn。
+  # 跳证参数键名各家不一（allow_insecure/allowInsecure/insecure），多写几种兼容，
+  # 最终以客户端手动开启“允许不安全连接”为准。
   tuic_url = format(
-    "tuic://%s:%s@%s:%d?sni=%s&congestion_control=bbr&insecure=1#%s",
+    "tuic://%s:%s@%s:%d?sni=%s&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1&insecure=1#%s",
     random_uuid.user_uuid.result,
     urlencode(random_password.password.result),
     local.ip_address,
@@ -76,7 +82,8 @@ mkdir -p /etc/sing-box
 openssl req -x509 -nodes -newkey ec -pkeyopt ec_paramgen_curve:P-256 \
   -keyout /etc/sing-box/server.key \
   -out /etc/sing-box/server.crt \
-  -subj "/CN=${local.sni}" -days 36500
+  -subj "/CN=${local.sni}" \
+  -addext "subjectAltName=DNS:${local.sni}" -days 36500
 
 chmod 644 /etc/sing-box/server.key
 chmod 644 /etc/sing-box/server.crt
@@ -99,6 +106,7 @@ cat > /etc/sing-box/config.json <<'EOF'
       "congestion_control": "bbr",
       "tls": {
         "enabled": true,
+        "alpn": ["h3"],
         "certificate_path": "/etc/sing-box/server.crt",
         "key_path": "/etc/sing-box/server.key"
       }

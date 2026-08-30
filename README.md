@@ -25,6 +25,7 @@
 ```
 
 ## 项目结构
+
 ```
 ├── terraform/         # Terraform 配置（部署 Lightsail 实例）
 │   ├── lightsail-combined/     # 多协议合一模块 (SS + HY2 + Xray + AnyTLS + TUIC)
@@ -52,6 +53,7 @@
 ---
 
 ### 准备工作
+
 1. AWS Access Key（用于创建 Lightsail 实例）
 2. 阿里云 OSS Access Key（用于写出配置文件）
 3. 创建一个 OSS Bucket（**最好选择海外 Region**，如新加坡 `oss-ap-southeast-1`）
@@ -113,7 +115,7 @@ terraform/outputs/
 | hysteria | `hysteria_url` | `hysteria2://pass@host:port?sni=...&insecure=1#tag` |
 | xray | `xray_url` | `vless://uuid@host:443?security=reality&...#tag` |
 | anytls | `anytls_url` | `anytls://pass@host:port?sni=...&insecure=1#tag` |
-| tuic | `tuic_url` | `tuic://uuid:pass@host:port?sni=...&congestion_control=bbr&insecure=1#tag` |
+| tuic | `tuic_url` | `tuic://uuid:pass@host:port?sni=...&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1&insecure=1#tag` |
 | combined | 以上字段按启用协议包含 | — |
 
 ### 下载 OSS 配置文件
