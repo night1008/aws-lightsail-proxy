@@ -14,13 +14,15 @@ locals {
     : aws_lightsail_instance.instance.public_ip_address
   )
 
-  # hysteria2://<password>@<host>:<port>?sni=<sni>&insecure=1&udp=true#<tag>
-  # 自签证书需要 insecure=1；udp=true 显式开启 UDP 转发（Hysteria2 默认已支持 UDP）；password 中可能含 @/% 等字符，URL 编码后再拼接
+  # hysteria2://<password>@<host>:<port>?sni=<sni>&peer=<sni>&insecure=1&fastopen=1&udp=1#<tag>
+  # sni 为标准键，peer 为 Shadowrocket 键；fastopen=1 对应 SR“快速打开”开关，
+  # 缺失时需手动开启；insecure 跳过自签证书校验；password 需 URL 编码。
   hysteria_url = format(
-    "hysteria2://%s@%s:%d?sni=%s&insecure=1&udp=1#%s",
+    "hysteria2://%s@%s:%d?sni=%s&peer=%s&insecure=1&fastopen=1&udp=1#%s",
     urlencode(random_password.password.result),
     local.ip_address,
     local.hysteria_port,
+    local.sni,
     local.sni,
     format("%s-%s", var.config.region, var.config.instance_name),
   )

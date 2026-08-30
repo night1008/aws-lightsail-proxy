@@ -112,7 +112,7 @@ terraform/outputs/
 | 模块 | 分享链接字段 | 格式 |
 | --- | --- | --- |
 | shadowsocks | `shadowsocks_url` | `ss://BASE64@host:port#tag` |
-| hysteria | `hysteria_url` | `hysteria2://pass@host:port?sni=...&insecure=1#tag` |
+| hysteria | `hysteria_url` | `hysteria2://pass@host:port?sni=...&peer=...&insecure=1&fastopen=1&udp=1#tag` |
 | xray | `xray_url` | `vless://uuid@host:443?security=reality&...#tag` |
 | anytls | `anytls_url` | `anytls://pass@host:port?sni=...&insecure=1#tag` |
 | tuic | `tuic_url` | `tuic://uuid:pass@host:port?sni=...&alpn=h3&congestion_control=bbr&udp_relay_mode=native&allow_insecure=1&insecure=1#tag` |
