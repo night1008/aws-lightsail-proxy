@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import {
+  applyProxyUrlDefault,
   defaultInstanceConfig,
   normalizeInstanceConfig,
   validateInstanceConfig,
@@ -67,6 +68,36 @@ describe('normalizeInstanceConfig', () => {
     expect(result.tuic_port).toBe(8445)
     expect(result.tuic_password_length).toBe(10)
     expect(result.tuic_proxy_url).toBe('https://www.cloudflare.com')
+  })
+
+  it('falls back to default proxy urls when masquerade fields are empty', () => {
+    const result = normalizeInstanceConfig({
+      hysteria_proxy_url: '',
+      xray_proxy_url: '',
+    })
+    expect(result.hysteria_proxy_url).toBe('https://www.cloudflare.com')
+    expect(result.xray_proxy_url).toBe('https://aws.amazon.com')
+  })
+})
+
+describe('applyProxyUrlDefault', () => {
+  it.each([
+    ['hysteria_proxy_url', 'https://www.cloudflare.com'],
+    ['xray_proxy_url', 'https://aws.amazon.com'],
+    ['anytls_proxy_url', 'https://www.cloudflare.com'],
+    ['tuic_proxy_url', 'https://www.cloudflare.com'],
+  ])('清空 %s 时回落到默认值', (attr, expected) => {
+    expect(applyProxyUrlDefault(attr, '')).toBe(expected)
+    expect(applyProxyUrlDefault(attr, '   ')).toBe(expected)
+    expect(applyProxyUrlDefault(attr, undefined)).toBe(expected)
+  })
+
+  it('保留用户输入的值', () => {
+    expect(applyProxyUrlDefault('hysteria_proxy_url', 'https://example.com')).toBe('https://example.com')
+  })
+
+  it('不影响非 proxy_url 字段', () => {
+    expect(applyProxyUrlDefault('hysteria_port', '')).toBe('')
   })
 })
 

@@ -28,6 +28,21 @@ export const defaultInstanceConfig = {
   tuic_proxy_url: 'https://www.cloudflare.com',
 }
 
+export const proxyUrlFields = [
+  'hysteria_proxy_url',
+  'xray_proxy_url',
+  'anytls_proxy_url',
+  'tuic_proxy_url',
+]
+
+// 输入框被清空时回落到默认伪装域名，避免出现空 URL 导致提交校验失败
+export function applyProxyUrlDefault(attr, value) {
+  if (proxyUrlFields.includes(attr) && !String(value ?? '').trim()) {
+    return defaultInstanceConfig[attr]
+  }
+  return value
+}
+
 export function normalizeInstanceConfig(instance) {
   const raw = instance || {}
   const config = {

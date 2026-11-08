@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
+  applyProxyUrlDefault,
   defaultInstanceConfig,
   normalizeInstanceConfig,
   validateInstanceConfig,
@@ -103,8 +104,12 @@ export default function Home() {
     e.preventDefault()
     e.stopPropagation()
 
-    for (let i = 0; i < instanceConfigs.length; i++) {
-      const err = validateInstanceConfig(instanceConfigs[i], i)
+    // 空白字段（如清空过的 proxy_url）回落到默认值，与 terraform 侧 optional(string, default) 语义一致
+    const normalizedConfigs = instanceConfigs.map((config) => normalizeInstanceConfig(config))
+    setInstanceConfigs(normalizedConfigs)
+
+    for (let i = 0; i < normalizedConfigs.length; i++) {
+      const err = validateInstanceConfig(normalizedConfigs[i], i)
       if (err) {
         setFormError(err)
         return
@@ -117,7 +122,7 @@ export default function Home() {
       method: "POST",
       body: JSON.stringify({
         "auth_token": authToken,
-        "combined_instances": instanceConfigs
+        "combined_instances": normalizedConfigs
       })
     })
       .then((res) => res.json())
@@ -155,7 +160,7 @@ export default function Home() {
 
   function handleInstanceChange(index, attr, value) {
     const configs = [...instanceConfigs]
-    configs[index][attr] = value
+    configs[index][attr] = applyProxyUrlDefault(attr, value)
     if (attr === "region") {
       const zones = lightsail_availability_zones[value]
       if (zones && zones.length > 0) {
@@ -558,6 +563,7 @@ export default function Home() {
                           <Input
                             type="text"
                             value={instance.hysteria_proxy_url}
+                            placeholder={defaultInstanceConfig.hysteria_proxy_url}
                             onChange={(e) => handleInstanceChange(index, 'hysteria_proxy_url', e.target.value)}
                             disabled={!instance.hysteria_enable}
                           />
@@ -597,6 +603,7 @@ export default function Home() {
                           <Input
                             type="text"
                             value={instance.xray_proxy_url}
+                            placeholder={defaultInstanceConfig.xray_proxy_url}
                             onChange={(e) => handleInstanceChange(index, 'xray_proxy_url', e.target.value)}
                             disabled={!instance.xray_enable}
                           />
@@ -665,7 +672,8 @@ export default function Home() {
                           <Label className="text-xs">anytls_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.anytls_proxy_url || 'https://www.cloudflare.com'}
+                            value={instance.anytls_proxy_url}
+                            placeholder={defaultInstanceConfig.anytls_proxy_url}
                             onChange={(e) => handleInstanceChange(index, 'anytls_proxy_url', e.target.value)}
                             disabled={!instance.anytls_enable}
                           />
@@ -716,7 +724,8 @@ export default function Home() {
                           <Label className="text-xs">tuic_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.tuic_proxy_url || 'https://www.cloudflare.com'}
+                            value={instance.tuic_proxy_url}
+                            placeholder={defaultInstanceConfig.tuic_proxy_url}
                             onChange={(e) => handleInstanceChange(index, 'tuic_proxy_url', e.target.value)}
                             disabled={!instance.tuic_enable}
                           />
