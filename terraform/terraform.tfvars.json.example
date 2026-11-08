@@ -19,7 +19,7 @@
       "create_static_ip": false,
       "hysteria_port": 8443,
       "hysteria_password_length": 16,
-      "hysteria_proxy_url": "https://bing.com"
+      "hysteria_proxy_url": "https://www.cloudflare.com"
     }
   ],
   "combined_instances": [
@@ -35,20 +35,20 @@
       "hysteria_enable": true,
       "hysteria_port": 8443,
       "hysteria_password_length": 16,
-      "hysteria_proxy_url": "https://bing.com",
+      "hysteria_proxy_url": "https://www.cloudflare.com",
       "xray_enable": false,
       "xray_port": 443,
-      "xray_proxy_url": "https://bing.com",
+      "xray_proxy_url": "https://aws.amazon.com",
       "xray_private_key": "",
       "xray_public_key": "",
       "anytls_enable": false,
       "anytls_port": 8444,
       "anytls_password_length": 16,
-      "anytls_proxy_url": "https://bing.com",
+      "anytls_proxy_url": "https://www.cloudflare.com",
       "tuic_enable": false,
       "tuic_port": 8445,
       "tuic_password_length": 16,
-      "tuic_proxy_url": "https://bing.com"
+      "tuic_proxy_url": "https://www.cloudflare.com"
     }
   ],
   "xray_instances": [
@@ -58,7 +58,7 @@
       "availability_zone": "ap-northeast-1a",
       "create_static_ip": false,
       "xray_port": 443,
-      "xray_proxy_url": "https://bing.com",
+      "xray_proxy_url": "https://aws.amazon.com",
       "xray_private_key": "<用 xray x25519 生成的 Private key>",
       "xray_public_key": "<用 xray x25519 生成的 Public key>"
     }
@@ -71,7 +71,7 @@
       "create_static_ip": false,
       "anytls_port": 8444,
       "anytls_password_length": 16,
-      "anytls_proxy_url": "https://bing.com"
+      "anytls_proxy_url": "https://www.cloudflare.com"
     }
   ],
   "tuic_instances": [
@@ -82,7 +82,7 @@
       "create_static_ip": false,
       "tuic_port": 8445,
       "tuic_password_length": 16,
-      "tuic_proxy_url": "https://bing.com"
+      "tuic_proxy_url": "https://www.cloudflare.com"
     }
   ]
 }

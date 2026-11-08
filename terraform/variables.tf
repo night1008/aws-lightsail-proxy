@@ -31,7 +31,7 @@ variable "hysteria_instances" {
     create_static_ip         = bool                   # create lightsail static ip
     hysteria_port            = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length = number                 # hysteria2 password length
-    hysteria_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    hysteria_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   }))
   default = []
   validation {
@@ -54,20 +54,20 @@ variable "combined_instances" {
     hysteria_enable                   = bool                   # 是否启用 hysteria2
     hysteria_port                     = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length          = number                 # hysteria2 password length
-    hysteria_proxy_url                = string                 # masquerade proxy url, e.g. https://bing.com
+    hysteria_proxy_url                = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
     xray_enable                       = bool                   # 是否启用 xray (VLESS+REALITY)
     xray_port                         = number                 # xray listen port，建议使用 443
-    xray_proxy_url                    = string                 # REALITY 伪装目标 URL，如 https://bing.com
+    xray_proxy_url                    = string                 # REALITY 伪装目标 URL，如 https://aws.amazon.com
     xray_private_key                  = string                 # x25519 私钥（base64url，无填充）
     xray_public_key                   = string                 # x25519 公钥（base64url，无填充）
     anytls_enable                     = bool                   # 是否启用 anytls (sing-box)
     anytls_port                       = optional(number, 8444) # anytls listen port，默认 8444
     anytls_password_length            = number                 # anytls password length
-    anytls_proxy_url                  = string                 # masquerade proxy url, e.g. https://bing.com
+    anytls_proxy_url                  = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
     tuic_enable                       = bool                   # 是否启用 tuic v5 (sing-box)
     tuic_port                         = optional(number, 8445) # tuic listen port，默认 8445
     tuic_password_length              = number                 # tuic password length
-    tuic_proxy_url                    = string                 # masquerade proxy url, e.g. https://bing.com
+    tuic_proxy_url                    = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   }))
   default = []
   validation {
@@ -84,7 +84,7 @@ variable "xray_instances" {
     availability_zone = string # aws lightsail instance availability zone
     create_static_ip  = bool   # create lightsail static ip
     xray_port         = number # xray listen port，建议使用 443
-    xray_proxy_url    = string # REALITY 伪装目标 URL，如 https://bing.com
+    xray_proxy_url    = string # REALITY 伪装目标 URL，如 https://aws.amazon.com
     xray_private_key  = string # x25519 私钥（base64url，无填充），服务端使用
     xray_public_key   = string # x25519 公钥（base64url，无填充），客户端使用
   }))
@@ -104,7 +104,7 @@ variable "anytls_instances" {
     create_static_ip       = bool                   # create lightsail static ip
     anytls_port            = optional(number, 8444) # anytls listen port，默认 8444
     anytls_password_length = number                 # anytls password length
-    anytls_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    anytls_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   }))
   default = []
   validation {
@@ -122,7 +122,7 @@ variable "tuic_instances" {
     create_static_ip     = bool                   # create lightsail static ip
     tuic_port            = optional(number, 8445) # tuic listen port，默认 8445
     tuic_password_length = number                 # tuic password length
-    tuic_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    tuic_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   }))
   default = []
   validation {

@@ -665,7 +665,7 @@ export default function Home() {
                           <Label className="text-xs">anytls_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.anytls_proxy_url || 'https://bing.com'}
+                            value={instance.anytls_proxy_url || 'https://www.cloudflare.com'}
                             onChange={(e) => handleInstanceChange(index, 'anytls_proxy_url', e.target.value)}
                             disabled={!instance.anytls_enable}
                           />
@@ -716,7 +716,7 @@ export default function Home() {
                           <Label className="text-xs">tuic_proxy_url</Label>
                           <Input
                             type="text"
-                            value={instance.tuic_proxy_url || 'https://bing.com'}
+                            value={instance.tuic_proxy_url || 'https://www.cloudflare.com'}
                             onChange={(e) => handleInstanceChange(index, 'tuic_proxy_url', e.target.value)}
                             disabled={!instance.tuic_enable}
                           />

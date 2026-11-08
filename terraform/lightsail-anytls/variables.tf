@@ -7,7 +7,7 @@ variable "config" {
     create_static_ip       = bool                   # create lightsail static ip
     anytls_port            = optional(number, 8444) # anytls listen port，默认 8444
     anytls_password_length = number                 # anytls password length
-    anytls_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    anytls_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   })
 }
 

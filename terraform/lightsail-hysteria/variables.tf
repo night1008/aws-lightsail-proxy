@@ -11,7 +11,7 @@ variable "config" {
     create_static_ip         = bool                   # create lightsail static ip
     hysteria_port            = optional(number, 8443) # hysteria2 listen port，默认 8443
     hysteria_password_length = number                 # hysteria2 password length
-    hysteria_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    hysteria_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   })
   default = {
     region                   = "ap-northeast-1"
@@ -20,7 +20,7 @@ variable "config" {
     create_static_ip         = true
     hysteria_port            = 8443
     hysteria_password_length = 16
-    hysteria_proxy_url       = "https://bing.com"
+    hysteria_proxy_url       = "https://www.cloudflare.com"
   }
 
   validation {

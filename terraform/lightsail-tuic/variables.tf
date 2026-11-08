@@ -7,7 +7,7 @@ variable "config" {
     create_static_ip     = bool                   # create lightsail static ip
     tuic_port            = optional(number, 8445) # tuic listen port，默认 8445
     tuic_password_length = number                 # tuic password length
-    tuic_proxy_url       = string                 # masquerade proxy url, e.g. https://bing.com
+    tuic_proxy_url       = string                 # masquerade proxy url, e.g. https://www.cloudflare.com
   })
 }
 

@@ -20,22 +20,22 @@ variable "config" {
     shadowsocks_libev_password_length = optional(number, 10)                       # shadowsocks-libev password length
     shadowsocks_libev_method          = optional(string, "chacha20-ietf-poly1305") # shadowsocks-libev cipher method
     # hysteria2（hysteria_enable = true 时生效）
-    hysteria_port            = optional(number, 8443)               # hysteria2 listen port，默认 8443
-    hysteria_password_length = optional(number, 10)                 # hysteria2 password length
-    hysteria_proxy_url       = optional(string, "https://bing.com") # masquerade proxy url
+    hysteria_port            = optional(number, 8443)                         # hysteria2 listen port，默认 8443
+    hysteria_password_length = optional(number, 10)                           # hysteria2 password length
+    hysteria_proxy_url       = optional(string, "https://www.cloudflare.com") # masquerade proxy url
     # xray VLESS+REALITY（xray_enable = true 时生效）
-    xray_port        = optional(number, 443)                # xray listen port，建议使用 443
-    xray_proxy_url   = optional(string, "https://bing.com") # REALITY 伪装目标 URL
-    xray_private_key = optional(string, "")                 # x25519 私钥（base64url，无填充），服务端使用
-    xray_public_key  = optional(string, "")                 # x25519 公钥（base64url，无填充），客户端使用
+    xray_port        = optional(number, 443)                      # xray listen port，建议使用 443
+    xray_proxy_url   = optional(string, "https://aws.amazon.com") # REALITY 伪装目标 URL
+    xray_private_key = optional(string, "")                       # x25519 私钥（base64url，无填充），服务端使用
+    xray_public_key  = optional(string, "")                       # x25519 公钥（base64url，无填充），客户端使用
     # anytls（anytls_enable = true 时生效）
-    anytls_port            = optional(number, 8444)               # anytls listen port，默认 8444
-    anytls_password_length = optional(number, 10)                 # anytls password length
-    anytls_proxy_url       = optional(string, "https://bing.com") # masquerade proxy url
+    anytls_port            = optional(number, 8444)                         # anytls listen port，默认 8444
+    anytls_password_length = optional(number, 10)                           # anytls password length
+    anytls_proxy_url       = optional(string, "https://www.cloudflare.com") # masquerade proxy url
     # tuic v5（tuic_enable = true 时生效）
-    tuic_port            = optional(number, 8445)               # tuic listen port，默认 8445
-    tuic_password_length = optional(number, 10)                 # tuic password length
-    tuic_proxy_url       = optional(string, "https://bing.com") # masquerade proxy url
+    tuic_port            = optional(number, 8445)                         # tuic listen port，默认 8445
+    tuic_password_length = optional(number, 10)                           # tuic password length
+    tuic_proxy_url       = optional(string, "https://www.cloudflare.com") # masquerade proxy url
   })
   default = {
     region                            = "ap-northeast-1"
@@ -52,17 +52,17 @@ variable "config" {
     shadowsocks_libev_method          = "chacha20-ietf-poly1305"
     hysteria_port                     = 8443
     hysteria_password_length          = 10
-    hysteria_proxy_url                = "https://bing.com"
+    hysteria_proxy_url                = "https://www.cloudflare.com"
     xray_port                         = 443
-    xray_proxy_url                    = "https://bing.com"
+    xray_proxy_url                    = "https://aws.amazon.com"
     xray_private_key                  = ""
     xray_public_key                   = ""
     anytls_port                       = 8444
     anytls_password_length            = 10
-    anytls_proxy_url                  = "https://bing.com"
+    anytls_proxy_url                  = "https://www.cloudflare.com"
     tuic_port                         = 8445
     tuic_password_length              = 10
-    tuic_proxy_url                    = "https://bing.com"
+    tuic_proxy_url                    = "https://www.cloudflare.com"
   }
 
   validation {

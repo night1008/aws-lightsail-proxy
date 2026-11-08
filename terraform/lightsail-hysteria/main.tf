@@ -2,7 +2,7 @@ locals {
   output_oss_object_key  = "outputs/hysteria-configs/${var.config.region}/${var.config.instance_name}.json"
   local_output_file_name = "outputs/hysteria-configs/${var.config.region}-${var.config.instance_name}.json"
 
-  # 从 https://bing.com[/...] 中解析出主机段，用作自签证书 CN 与客户端 SNI
+  # 从 https://www.cloudflare.com[/...] 中解析出主机段，用作自签证书 CN 与客户端 SNI
   proxy_host_with_path = replace(replace(var.config.hysteria_proxy_url, "https://", ""), "http://", "")
   sni                  = split("/", local.proxy_host_with_path)[0]
 
